@@ -1,0 +1,15 @@
+node_modules/
+*.log
+*.log.*
+.env
+.env.*
+/dist/
+/build/
+coverage/
+.vscode/
+package-lock.json
+*.bak
+*.tmp
+*.swp
+*.tsbuildinfo
+jest-cache/
