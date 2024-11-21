@@ -42,12 +42,28 @@ export class Ride {
     this._date = date;
   }
 
+  get origin(): Location {
+    return this._origin;
+  }
+
+  get destination(): Location {
+    return this._destination;
+  }
+
   get driver(): Driver {
     return this._driver;
   }
 
-  get distance() {
+  get distance(): number {
     return this._distance;
+  }
+
+  get duration(): string {
+    return this._duration;
+  }
+
+  get value(): number {
+    return this._value;
   }
 
   estimateRide(): number {
