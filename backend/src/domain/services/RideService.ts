@@ -5,9 +5,9 @@ import { IRideRepository } from '@domain/interfaces/IRideRepository';
 
 export class RideService {
   constructor(
-    private readonly rideRepository: IRideRepository,
-    private readonly driverRepository: IDriverRepository,
     private readonly customerRepository: ICustomerRepository,
+    private readonly driverRepository: IDriverRepository,
+    private readonly rideRepository: IRideRepository,
   ) {}
 
   async confirmRide(customerId: string, rideDetails: Ride): Promise<Ride> {
@@ -32,7 +32,7 @@ export class RideService {
       throw new Error('Invalid distance for this driver');
     }
 
-    const ride = new Ride({
+    const newRide = {
       customerId,
       origin: rideDetails.origin,
       destination: rideDetails.destination,
@@ -40,8 +40,10 @@ export class RideService {
       duration: rideDetails.duration,
       driver: driver,
       value: rideDetails.value,
-      date: new Date(),
-    });
+      date: rideDetails.date,
+    };
+
+    const ride = new Ride(newRide);
 
     await this.rideRepository.create(ride);
 

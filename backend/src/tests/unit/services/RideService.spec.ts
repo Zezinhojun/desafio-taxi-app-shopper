@@ -9,16 +9,16 @@ import { mockRideFactory } from '../entities/Ride.spec';
 import { mockDriverFactory } from '../entities/Driver.spec';
 import { mockCustomerFactory } from '../entities/Customer.spec';
 
-const mockCustomerRepository: jest.Mocked<ICustomerRepository> = {
+export const mockCustomerRepository: jest.Mocked<ICustomerRepository> = {
   findById: jest.fn(),
 };
 
-const mockDriverRepository: jest.Mocked<IDriverRepository> = {
+export const mockDriverRepository: jest.Mocked<IDriverRepository> = {
   findById: jest.fn(),
   findEligibleDrivers: jest.fn(),
 };
 
-const mockRideRepository: jest.Mocked<IRideRepository> = {
+export const mockRideRepository: jest.Mocked<IRideRepository> = {
   create: jest.fn(),
   findByCustomerId: jest.fn(),
   findByDriverId: jest.fn(),
@@ -26,9 +26,9 @@ const mockRideRepository: jest.Mocked<IRideRepository> = {
 
 export const mockRideServiceFactory = (): RideService => {
   return new RideService(
-    mockRideRepository,
-    mockDriverRepository,
     mockCustomerRepository,
+    mockDriverRepository,
+    mockRideRepository,
   );
 };
 
