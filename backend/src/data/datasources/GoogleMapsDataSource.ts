@@ -4,8 +4,7 @@ import axios from 'axios';
 export class GoogleMapsDataSource {
   private readonly apiKey: string;
   constructor() {
-    this.apiKey =
-      process.env.GOOGLE_API_KEY ?? '';
+    this.apiKey = process.env.GOOGLE_API_KEY ?? '';
   }
 
   async geocodeAddress(address: string): Promise<Location> {

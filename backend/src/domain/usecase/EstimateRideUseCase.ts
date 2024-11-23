@@ -15,7 +15,7 @@ export class EstimateRideUseCase {
   constructor(
     private readonly driverRepository: IDriverRepository,
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) { }
+  ) {}
 
   async execute({
     customerId,

@@ -1,3 +1,4 @@
+import { GetRideHistoryUseCase } from './../usecase/GetRideHistoryUseCase';
 import { Ride } from '@domain/entities/Ride';
 import { RideEstimate } from '@domain/entities/RideEstimate';
 import { ConfirmRideUseCase } from '@domain/usecase/ConfirmRideUserCase';
@@ -18,6 +19,7 @@ export class RideService {
   constructor(
     private readonly confirmRideUseCase: ConfirmRideUseCase,
     private readonly estimateRideUseCase: EstimateRideUseCase,
+    private readonly getRideHistoryUseCase: GetRideHistoryUseCase,
   ) {}
 
   async estimateRide({
@@ -29,7 +31,15 @@ export class RideService {
     return this.estimateRideUseCase.execute(params);
   }
 
-  async confirmRide(customerId: string, rideDetails: Ride): Promise<Ride> {
-    return this.confirmRideUseCase.execute(customerId, rideDetails);
+  async confirmRide({
+    customerId,
+    rideDetails,
+  }: ConfirmRideParams): Promise<Ride> {
+    const params = { customerId, rideDetails };
+    return this.confirmRideUseCase.execute(params);
+  }
+
+  async getRideHistory(customerId: string): Promise<Ride[]> {
+    return await this.getRideHistoryUseCase.execute(customerId);
   }
 }

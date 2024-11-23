@@ -10,6 +10,7 @@ import { mockConfirmRideUseCaseFactory } from '../usecases/ConfirmRideUseCase.sp
 import { mockEstimateRideUseCaseFactory } from '../usecases/EstimateRideUseCase.spec';
 import { Driver } from '@domain/entities/Driver';
 import { mockDriverFactory } from '../entities/Driver.spec';
+import { mockGetRideHistoryUseCaseFactory } from '../usecases/GetRideHistoryUseCase.spec';
 
 export const mockCustomerRepository: jest.Mocked<ICustomerRepository> = {
   findById: jest.fn(),
@@ -36,6 +37,7 @@ export const mockRideServiceFactory = (): RideService => {
   return new RideService(
     mockConfirmRideUseCaseFactory(),
     mockEstimateRideUseCaseFactory(),
+    mockGetRideHistoryUseCaseFactory(),
   );
 };
 
@@ -61,7 +63,11 @@ describe('RideService', () => {
   });
 
   it('should confirm a ride successfully', async () => {
-    const result = await rideService.confirmRide(mockCustomer.id, mockRide);
+    const params = {
+      customerId: mockCustomer.id,
+      rideDetails: mockRide,
+    };
+    const result = await rideService.confirmRide(params);
 
     expect(result).toEqual(mockRide);
     expect(result).toBeInstanceOf(Ride);
@@ -69,17 +75,27 @@ describe('RideService', () => {
 
   it('should throw error when customer is not found', async () => {
     mockCustomerRepository.findById.mockResolvedValue(null);
-    await expect(
-      rideService.confirmRide(mockCustomer.id, mockRide),
-    ).rejects.toThrow('Customer not found');
+    const params = {
+      customerId: mockCustomer.id,
+      rideDetails: mockRide,
+    };
+    await expect(rideService.confirmRide(params)).rejects.toThrow(
+      'Customer not found',
+    );
   });
 
   it('should throw error when driver is not found', async () => {
     mockCustomerRepository.findById.mockResolvedValue(mockCustomer);
     mockDriverRepository.findById.mockResolvedValue(null);
 
-    await expect(
-      rideService.confirmRide(mockCustomer.id, mockRide),
-    ).rejects.toThrow('Driver not found');
+    mockCustomerRepository.findById.mockResolvedValue(null);
+    const params = {
+      customerId: mockCustomer.id,
+      rideDetails: mockRide,
+    };
+
+    await expect(rideService.confirmRide(params)).rejects.toThrow(
+      'Driver not found',
+    );
   });
 });

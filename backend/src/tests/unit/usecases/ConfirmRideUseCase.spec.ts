@@ -40,7 +40,11 @@ describe('ConfirmRideUseCase', () => {
   });
 
   it('should successfully confirm a ride', async () => {
-    const result = await confirmRideUseCase.execute(mockCustomer.id, mockRide);
+    const params = {
+      customerId: mockCustomer.id,
+      rideDetails: mockRide,
+    };
+    const result = await confirmRideUseCase.execute(params);
 
     expect(mockCustomerRepository.findById).toHaveBeenCalledWith(
       mockCustomer.id,
@@ -54,17 +58,25 @@ describe('ConfirmRideUseCase', () => {
 
   it('should throw error if customer is not found', async () => {
     mockCustomerRepository.findById.mockResolvedValue(null);
+    const params = {
+      customerId: mockCustomer.id,
+      rideDetails: mockRide,
+    };
 
-    await expect(
-      confirmRideUseCase.execute(mockCustomer.id, mockRide),
-    ).rejects.toThrow('Customer not found');
+    await expect(confirmRideUseCase.execute(params)).rejects.toThrow(
+      'Customer not found',
+    );
   });
 
   it('should throw error if driver is not found', async () => {
     mockDriverRepository.findById.mockResolvedValue(null);
+    const params = {
+      customerId: mockCustomer.id,
+      rideDetails: mockRide,
+    };
 
-    await expect(
-      confirmRideUseCase.execute(mockCustomer.id, mockRide),
-    ).rejects.toThrow('Driver not found');
+    await expect(confirmRideUseCase.execute(params)).rejects.toThrow(
+      'Driver not found',
+    );
   });
 });

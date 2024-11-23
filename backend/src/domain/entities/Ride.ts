@@ -43,7 +43,7 @@ export class Ride {
   }
 
   get customerId(): string {
-    return this._customerId
+    return this._customerId;
   }
 
   get origin(): Location {

@@ -2,6 +2,7 @@ import { Ride, RideParams } from '@domain/entities/Ride';
 import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
+import { ConfirmRideParams } from '@domain/services/RideService';
 
 export class ConfirmRideUseCase {
   constructor(
@@ -10,7 +11,7 @@ export class ConfirmRideUseCase {
     private readonly driverRepository: IDriverRepository,
   ) {}
 
-  async execute(customerId: string, rideDetails: Ride): Promise<Ride> {
+  async execute({ customerId, rideDetails }: ConfirmRideParams): Promise<Ride> {
     const customer = await this.customerRepository.findById(customerId);
     if (!customer) {
       throw new Error('Customer not found');
