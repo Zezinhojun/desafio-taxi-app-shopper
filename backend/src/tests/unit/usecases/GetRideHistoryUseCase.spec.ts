@@ -1,56 +1,38 @@
 import { GetRideHistoryUseCase } from '@domain/usecase/GetRideHistoryUseCase';
-import {
-  mockCustomerRepository,
-  mockRideRepository,
-} from '../services/RideService.spec';
-import { Customer } from '@domain/entities/Customer';
-import { mockCustomerFactory } from '../entities/Customer.spec';
+import { setupTest, TestSetup } from '../../utils/testSetup';
 import { Ride } from '@domain/entities/Ride';
-import { mockRideFactory } from '../entities/Ride.spec';
-
-export const mockGetRideHistoryUseCaseFactory = (): GetRideHistoryUseCase => {
-  return new GetRideHistoryUseCase(mockRideRepository, mockCustomerRepository);
-};
 
 describe('GetRideHistoryUseCase', () => {
-  let getRideHistoryUseCase: GetRideHistoryUseCase;
-  let mockCustomer: Customer;
-  let mockRide: Ride;
+  let testSetup: TestSetup<GetRideHistoryUseCase>;
 
   beforeEach(() => {
-    mockCustomer = mockCustomerFactory();
-    mockRide = mockRideFactory({
-      customerId: mockCustomer.id,
-    });
+    testSetup = setupTest(GetRideHistoryUseCase);
 
-    getRideHistoryUseCase = mockGetRideHistoryUseCaseFactory();
-
-    mockCustomerRepository.findById.mockResolvedValue(mockCustomer);
-    mockRideRepository.create.mockResolvedValue(mockRide);
+    jest.spyOn(testSetup.rideRepository, 'findByCustomerId');
   });
 
   it('should return the list of rides for the customer', async () => {
-    const mockRides = [mockRide];
-    mockRideRepository.findByCustomerId.mockResolvedValue(mockRides);
+    const { sut, mockCustomer, rideRepository } = testSetup;
 
-    const result = await getRideHistoryUseCase.execute(mockCustomer.id);
-    expect(mockRideRepository.findByCustomerId).toHaveBeenCalledTimes(1);
+    const result = await sut.execute(mockCustomer.id);
 
-    expect(result).toEqual(mockRides);
+    expect(rideRepository.findByCustomerId).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(rideRepository.ridesList);
+    result.forEach((ride) => {
+      expect(ride).toBeInstanceOf(Ride);
+    });
   });
 
   it('should return an empty list if no rides are found for the customer', async () => {
-    mockRideRepository.findByCustomerId.mockResolvedValue([]);
+    const { sut, mockCustomer, rideRepository } = testSetup;
 
-    const result = await getRideHistoryUseCase.execute(mockCustomer.id);
+    rideRepository.clear();
 
-    expect(mockRideRepository.findByCustomerId).toHaveBeenCalledTimes(1);
+    const result = await sut.execute(mockCustomer.id);
+
+    expect(rideRepository.findByCustomerId).toHaveBeenCalledTimes(1);
     expect(result).toEqual([]);
-    expect(mockCustomerRepository.findById).toHaveBeenCalledWith(
-      mockCustomer.id,
-    );
-    expect(mockRideRepository.findByCustomerId).toHaveBeenCalledWith(
-      mockCustomer.id,
-    );
+
+    expect(result).not.toBeInstanceOf(Ride);
   });
 });

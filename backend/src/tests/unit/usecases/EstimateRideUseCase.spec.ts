@@ -1,53 +1,19 @@
 import { EstimateRideUseCase } from '@domain/usecase/EstimateRideUseCase';
-import { mockDriverRepository } from '../services/RideService.spec';
-import { GoogleMapsDataSource } from '@data/datasources/GoogleMapsDataSource';
 import { RideEstimate } from '@domain/entities/RideEstimate';
 import { faker } from '@faker-js/faker/.';
-import { Location } from '@domain/entities/Location';
-import { mockLocationFactory } from '../entities/Location.spec';
-
-jest.mock('@data/datasources/GoogleMapsDataSource');
-
-export const googleMapsDataSourceFactory = (): GoogleMapsDataSource => {
-  return new GoogleMapsDataSource();
-};
-
-export const mockEstimateRideUseCaseFactory = (): EstimateRideUseCase => {
-  return new EstimateRideUseCase(
-    mockDriverRepository,
-    googleMapsDataSourceFactory(),
-  );
-};
+import { setupTest } from '../../utils/testSetup';
 
 describe('EstimateRideUseCase', () => {
-  let estimateRideUseCase: EstimateRideUseCase;
-  let mockGoogleMapsDataSource: jest.Mocked<GoogleMapsDataSource>;
-  let mockLocation: Location;
-
-  beforeEach(() => {
-    mockLocation = mockLocationFactory();
-    mockGoogleMapsDataSource =
-      new GoogleMapsDataSource() as jest.Mocked<GoogleMapsDataSource>;
-    mockGoogleMapsDataSource.geocodeAddress = jest
-      .fn()
-      .mockImplementation(async () => {
-        return mockLocation;
-      });
-
-    mockGoogleMapsDataSource.calculateRote = jest.fn().mockResolvedValue({
-      distance: 10,
-      duration: '15m',
-      polyline: 'mock-polyline',
-      originalResponse: {},
-    });
-
-    estimateRideUseCase = new EstimateRideUseCase(
-      mockDriverRepository,
-      mockGoogleMapsDataSource,
-    );
-  });
+  const setup = () => {
+    const test = setupTest(EstimateRideUseCase, true);
+    return {
+      ...test,
+      estimateRideUseCase: test.sut,
+    };
+  };
 
   it('should estimate ride successfully', async () => {
+    const { estimateRideUseCase, googleMapsDataSource } = setup();
     const origin = faker.location.streetAddress();
     const destination = faker.location.streetAddress();
     const customerId = faker.string.uuid();
@@ -58,22 +24,23 @@ describe('EstimateRideUseCase', () => {
       destination,
     });
 
-    expect(mockGoogleMapsDataSource.geocodeAddress).toHaveBeenCalledTimes(2);
-    expect(mockGoogleMapsDataSource.geocodeAddress).toHaveBeenCalledWith(
-      origin,
-    );
-    expect(mockGoogleMapsDataSource.geocodeAddress).toHaveBeenCalledWith(
+    expect(googleMapsDataSource?.geocodeAddress).toHaveBeenCalledTimes(2);
+    expect(googleMapsDataSource?.geocodeAddress).toHaveBeenCalledWith(origin);
+    expect(googleMapsDataSource?.geocodeAddress).toHaveBeenCalledWith(
       destination,
     );
-    expect(mockGoogleMapsDataSource.calculateRote).toHaveBeenCalled();
+    expect(googleMapsDataSource?.calculateRote).toHaveBeenCalled();
 
     expect(result).toBeInstanceOf(RideEstimate);
     expect(result.distance).toBe(10);
     expect(result.duration).toBe('15m');
+    expect(result).toBeInstanceOf(RideEstimate);
   });
 
   it('should throw error when origin and destination are the same', async () => {
+    const { estimateRideUseCase } = setup();
     const address = faker.location.streetAddress();
+
     await expect(
       estimateRideUseCase.execute({
         customerId: faker.string.uuid(),
