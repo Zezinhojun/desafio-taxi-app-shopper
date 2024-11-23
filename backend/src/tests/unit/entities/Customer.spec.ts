@@ -1,8 +1,10 @@
-import { Customer } from '@domain/entities/Customer';
+import { Customer, CustomerParams } from '@domain/entities/Customer';
 import { faker } from '@faker-js/faker/.';
 import { mockRideFactory } from './Ride.spec';
 
-export const mockCustomerFactory = (): Customer => {
+export const mockCustomerFactory = (
+  overrides: Partial<CustomerParams> = {},
+): Customer => {
   const rideHistory = Array.from(
     { length: faker.number.int({ min: 5, max: 15 }) },
     () => mockRideFactory(),
@@ -10,6 +12,7 @@ export const mockCustomerFactory = (): Customer => {
   const customerParams = {
     id: faker.string.uuid(),
     rideHistory: rideHistory,
+    ...overrides,
   };
 
   return new Customer(customerParams);

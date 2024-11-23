@@ -1,9 +1,9 @@
-import { Ride } from '@domain/entities/Ride';
+import { Ride, RideParams } from '@domain/entities/Ride';
 import { faker } from '@faker-js/faker/.';
 import { mockDriverFactory } from './Driver.spec';
 import { mockLocationFactory } from './Location.spec';
 
-export const mockRideFactory = (): Ride => {
+export const mockRideFactory = (overrides: Partial<RideParams> = {}): Ride => {
   const driver = mockDriverFactory();
   const distance = faker.number.int({ min: 1, max: 100 });
   const rideParams = {
@@ -15,6 +15,7 @@ export const mockRideFactory = (): Ride => {
     driver: driver,
     value: driver.calculateRideValue(distance),
     date: new Date(),
+    ...overrides,
   };
 
   return new Ride(rideParams);

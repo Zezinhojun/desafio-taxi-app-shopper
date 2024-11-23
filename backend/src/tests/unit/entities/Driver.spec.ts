@@ -2,7 +2,9 @@ import { Driver, DriverParams } from '@domain/entities/Driver';
 import { faker } from '@faker-js/faker/.';
 import { mockVehicleFactory } from './Vehicle.spec';
 
-export const mockDriverFactory = (): Driver => {
+export const mockDriverFactory = (
+  overrides: Partial<DriverParams> = {},
+): Driver => {
   const driver: DriverParams = {
     id: faker.number.int(),
     name: faker.internet.username(),
@@ -10,6 +12,7 @@ export const mockDriverFactory = (): Driver => {
     vehicle: mockVehicleFactory(),
     ratePerKm: faker.number.float({ min: 1, max: 5 }),
     minimunDistance: faker.number.int({ min: 1, max: 10 }),
+    ...overrides,
   };
   return new Driver(driver);
 };

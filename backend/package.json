@@ -19,6 +19,7 @@
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@faker-js/faker": "^9.2.0",
+    "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.9.1",
     "eslint": "^9.15.0",
@@ -34,6 +35,8 @@
     "typescript-eslint": "^8.15.0"
   },
   "dependencies": {
-    "backend-taxi-app": "file:"
+    "axios": "^1.7.7",
+    "backend-taxi-app": "file:",
+    "express": "^4.21.1"
   }
 }

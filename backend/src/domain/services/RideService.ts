@@ -1,50 +1,45 @@
+import { GetRideHistoryUseCase } from './../usecase/GetRideHistoryUseCase';
 import { Ride } from '@domain/entities/Ride';
-import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
-import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
-import { IRideRepository } from '@domain/interfaces/IRideRepository';
+import { RideEstimate } from '@domain/entities/RideEstimate';
+import { ConfirmRideUseCase } from '@domain/usecase/ConfirmRideUserCase';
+import { EstimateRideUseCase } from '@domain/usecase/EstimateRideUseCase';
+
+export interface EstimateRideParams {
+  customerId: string;
+  origin: string;
+  destination: string;
+}
+
+export interface ConfirmRideParams {
+  customerId: string;
+  rideDetails: Ride;
+}
 
 export class RideService {
   constructor(
-    private readonly rideRepository: IRideRepository,
-    private readonly driverRepository: IDriverRepository,
-    private readonly customerRepository: ICustomerRepository,
+    private readonly confirmRideUseCase: ConfirmRideUseCase,
+    private readonly estimateRideUseCase: EstimateRideUseCase,
+    private readonly getRideHistoryUseCase: GetRideHistoryUseCase,
   ) {}
 
-  async confirmRide(customerId: string, rideDetails: Ride): Promise<Ride> {
-    const customer = await this.customerRepository.findById(customerId);
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
+  async estimateRide({
+    customerId,
+    origin,
+    destination,
+  }: EstimateRideParams): Promise<RideEstimate> {
+    const params = { customerId, origin, destination };
+    return this.estimateRideUseCase.execute(params);
+  }
 
-    if (
-      !rideDetails.origin ||
-      !rideDetails.destination ||
-      rideDetails.origin === rideDetails.destination
-    ) {
-      throw new Error('Invalid origin or destination');
-    }
-    const driver = await this.driverRepository.findById(rideDetails.driver.id);
-    if (!driver) {
-      throw new Error('Driver not found');
-    }
+  async confirmRide({
+    customerId,
+    rideDetails,
+  }: ConfirmRideParams): Promise<Ride> {
+    const params = { customerId, rideDetails };
+    return this.confirmRideUseCase.execute(params);
+  }
 
-    if (!driver.isEligibleForDistance(rideDetails.distance)) {
-      throw new Error('Invalid distance for this driver');
-    }
-
-    const ride = new Ride({
-      customerId,
-      origin: rideDetails.origin,
-      destination: rideDetails.destination,
-      distance: rideDetails.distance,
-      duration: rideDetails.duration,
-      driver: driver,
-      value: rideDetails.value,
-      date: new Date(),
-    });
-
-    await this.rideRepository.create(ride);
-
-    return ride;
+  async getRideHistory(customerId: string): Promise<Ride[]> {
+    return await this.getRideHistoryUseCase.execute(customerId);
   }
 }
