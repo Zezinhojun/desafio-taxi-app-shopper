@@ -16,6 +16,7 @@ import { mockRideFactory } from '../unit/entities/Ride.spec';
 import { Location } from '@domain/entities/Location';
 import { mockLocationFactory } from '..//unit/entities/Location.spec';
 import { RideService } from '@domain/services/RideService';
+import { RideController } from '@presentation/controllers/RideController';
 
 export interface TestSetup<T> {
   sut: T;
@@ -27,6 +28,7 @@ export interface TestSetup<T> {
   mockCustomer: Customer;
   mockDriver: Driver;
   mockLocation?: Location;
+  rideService?: RideService;
 }
 
 export const setupTest = <T>(
@@ -47,14 +49,16 @@ export const setupTest = <T>(
     driver: mockDriver,
   });
 
-  let googleMapsDataSource: jest.Mocked<GoogleMapsDataSource> | undefined;
+  const googleMapsDataSource: jest.Mocked<GoogleMapsDataSource> =
+    new GoogleMapsDataSource() as jest.Mocked<GoogleMapsDataSource>;
+
   let mockLocation: Location | undefined;
+  let rideService: RideService | undefined;
+
+  jest.mock('@data/datasources/GoogleMapsDataSource');
 
   if (includeGoogleMaps) {
-    jest.mock('@data/datasources/GoogleMapsDataSource');
     mockLocation = mockLocationFactory();
-    googleMapsDataSource =
-      new GoogleMapsDataSource() as jest.Mocked<GoogleMapsDataSource>;
 
     googleMapsDataSource.geocodeAddress = jest
       .fn()
@@ -65,10 +69,35 @@ export const setupTest = <T>(
       polyline: 'mock-polyline',
       originalResponse: {},
     });
+  } else {
+    googleMapsDataSource.geocodeAddress = jest.fn();
+    googleMapsDataSource.calculateRote = jest.fn();
   }
 
   let sut: T;
-  if (UseCaseClass === EstimateRideUseCase) {
+  if (UseCaseClass === RideController) {
+    const estimateRideUseCase = new EstimateRideUseCase(
+      driverRepository,
+      googleMapsDataSource,
+    );
+    const confirmRideUseCase = new ConfirmRideUseCase(
+      rideRepository,
+      customerRepository,
+      driverRepository,
+    );
+    const getRideHistoryUseCase = new GetRideHistoryUseCase(
+      rideRepository,
+      customerRepository,
+    );
+
+    rideService = new RideService(
+      confirmRideUseCase,
+      estimateRideUseCase,
+      getRideHistoryUseCase,
+    );
+
+    sut = new RideController(rideService) as T;
+  } else if (UseCaseClass === EstimateRideUseCase) {
     sut = new UseCaseClass(driverRepository, googleMapsDataSource);
   } else if (UseCaseClass === RideService) {
     sut = new UseCaseClass(

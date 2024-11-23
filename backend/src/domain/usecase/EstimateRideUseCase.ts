@@ -1,4 +1,5 @@
 import { GoogleMapsDataSource } from '@data/datasources/GoogleMapsDataSource';
+import { Driver } from '@domain/entities/Driver';
 import {
   RideEstimate,
   RideEstimateParams,
@@ -15,7 +16,7 @@ export class EstimateRideUseCase {
   constructor(
     private readonly driverRepository: IDriverRepository,
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) {}
+  ) { }
 
   async execute({
     customerId,
@@ -23,7 +24,7 @@ export class EstimateRideUseCase {
     destination,
   }: EstimateRideParams): Promise<RideEstimate> {
     if (!customerId || !origin || !destination || origin === destination) {
-      throw new Error('Invalid ride parameters');
+      throw new Error('INVALID_DATA');
     }
 
     const originLocation =
@@ -45,12 +46,24 @@ export class EstimateRideUseCase {
       routeDetails.distance,
     );
 
+    const mappedDrivers = availableDrivers.map((driver) => {
+      return new Driver({
+        id: driver.id,
+        name: driver.name,
+        description: driver.description,
+        vehicle: driver.vehicle,
+        ratePerKm: driver.ratePerKm,
+        minimumDistance: driver.minimumDistance,
+        review: driver.review,
+      });
+    });
+
     const rideEstimateParams: RideEstimateParams = {
       origin: originLocation,
       destination: destinationLocation,
       distance: routeDetails.distance,
       duration: routeDetails.duration,
-      availableDrivers: availableDrivers,
+      options: mappedDrivers,
       routeResponse: routeDetails.originalResponse,
     };
 

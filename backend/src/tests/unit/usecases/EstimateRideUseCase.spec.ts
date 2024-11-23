@@ -30,7 +30,6 @@ describe('EstimateRideUseCase', () => {
       destination,
     );
     expect(googleMapsDataSource?.calculateRote).toHaveBeenCalled();
-
     expect(result).toBeInstanceOf(RideEstimate);
     expect(result.distance).toBe(10);
     expect(result.duration).toBe('15m');
@@ -47,6 +46,6 @@ describe('EstimateRideUseCase', () => {
         origin: address,
         destination: address,
       }),
-    ).rejects.toThrow('Invalid ride parameters');
+    ).rejects.toThrow('INVALID_DATA');
   });
 });

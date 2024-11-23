@@ -24,6 +24,7 @@ export const mockRideFactory = (overrides: Partial<RideParams> = {}): Ride => {
 describe('Ride', () => {
   let ride: Ride;
   beforeEach(() => {
+    jest.resetAllMocks();
     ride = mockRideFactory();
   });
 

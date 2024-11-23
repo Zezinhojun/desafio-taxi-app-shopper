@@ -14,6 +14,7 @@ export const mockLocationFactory = (): Location => {
 describe('Location', () => {
   let location: Location;
   beforeEach(() => {
+    jest.resetAllMocks();
     location = mockLocationFactory();
   });
 
