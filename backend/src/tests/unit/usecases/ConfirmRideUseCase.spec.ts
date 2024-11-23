@@ -2,7 +2,6 @@ import {
   mockCustomerRepository,
   mockDriverRepository,
   mockRideRepository,
-  mockRideServiceFactory,
 } from './../services/RideService.spec';
 import { ConfirmRideUseCase } from '@domain/usecase/ConfirmRideUserCase';
 import { Ride } from '@domain/entities/Ride';
@@ -13,9 +12,13 @@ import { Driver } from '@domain/entities/Driver';
 import { mockDriverFactory } from '../entities/Driver.spec';
 
 export const mockConfirmRideUseCaseFactory = (): ConfirmRideUseCase => {
-  const rideService = mockRideServiceFactory();
-  return new ConfirmRideUseCase(rideService);
+  return new ConfirmRideUseCase(
+    mockRideRepository,
+    mockCustomerRepository,
+    mockDriverRepository,
+  );
 };
+
 describe('ConfirmRideUseCase', () => {
   let confirmRideUseCase: ConfirmRideUseCase;
   let mockRide: Ride;

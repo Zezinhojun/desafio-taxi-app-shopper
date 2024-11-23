@@ -15,6 +15,18 @@ export class Location {
     this._longitude = longitude;
   }
 
+  get address() {
+    return this._address;
+  }
+
+  get latitude() {
+    return this._latitude;
+  }
+
+  get longitude() {
+    return this._longitude;
+  }
+
   validateAddress(): boolean {
     if (!this._address || this._address.trim().length === 0) {
       return false;
