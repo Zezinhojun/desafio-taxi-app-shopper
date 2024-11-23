@@ -15,7 +15,7 @@ export class EstimateRideUseCase {
   constructor(
     private readonly driverRepository: IDriverRepository,
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) {}
+  ) { }
 
   async execute({
     customerId,
@@ -37,7 +37,7 @@ export class EstimateRideUseCase {
       destinationLocation,
     );
 
-    if (!routeDetails || routeDetails.distance === undefined) {
+    if (!routeDetails?.distance) {
       throw new Error('Unable to calculate route details');
     }
 

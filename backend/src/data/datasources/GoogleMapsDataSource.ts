@@ -5,13 +5,12 @@ export class GoogleMapsDataSource {
   private readonly apiKey: string;
   constructor() {
     this.apiKey =
-      process.env.GOOGLE_API_KEY ?? 'AIzaSyDha-YpFxFllXsqyLN9lq83uPS4pAi-hjU';
+      process.env.GOOGLE_API_KEY ?? '';
   }
 
   async geocodeAddress(address: string): Promise<Location> {
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${this.apiKey}`;
 
-    console.log(`Geocode URL: ${this.apiKey}`);
     try {
       const response = await axios.get(geocodeUrl);
 
@@ -81,7 +80,6 @@ export class GoogleMapsDataSource {
         polyline: route.polyline.encodedPolyline,
         originalResponse: response.data,
       };
-      console.log('Parsed Route Details:', routeDetails);
 
       return routeDetails;
     } catch (error) {

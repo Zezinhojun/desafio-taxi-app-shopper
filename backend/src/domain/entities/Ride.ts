@@ -42,6 +42,10 @@ export class Ride {
     this._date = date;
   }
 
+  get customerId(): string {
+    return this._customerId
+  }
+
   get origin(): Location {
     return this._origin;
   }
@@ -66,7 +70,7 @@ export class Ride {
     return this._value;
   }
 
-  get date() {
+  get date(): Date {
     return this._date;
   }
 
