@@ -60,6 +60,7 @@ export class RideService {
 
   private mapToRideDTO(ride: Ride): RideDTO {
     return {
+      id: ride.id,
       date: ride.date,
       origin: ride.origin.address,
       destination: ride.destination.address,
@@ -92,8 +93,14 @@ export class RideService {
     return this.mapToRideDTO(confirmedRide);
   }
 
-  async getRideHistory(customerId: string): Promise<RideHistoryDTO> {
-    const rides = await this.getRideHistoryUseCase.execute(customerId);
+  async getRideHistory(
+    customerId: string,
+    driverId?: number,
+  ): Promise<RideHistoryDTO> {
+    const rides = await this.getRideHistoryUseCase.execute(
+      customerId,
+      driverId,
+    );
     return {
       customer_id: customerId,
       rides: rides.map((ride) => this.mapToRideDTO(ride)),

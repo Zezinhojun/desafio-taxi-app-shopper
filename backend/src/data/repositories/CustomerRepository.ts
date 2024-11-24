@@ -14,7 +14,6 @@ export class CustomerRepository implements ICustomerRepository {
       rideHistory: [],
     }),
   ];
-
   async findById(id: string): Promise<Customer | null> {
     const customer = this.customers.find((c) => c.id === id);
     return customer || null;

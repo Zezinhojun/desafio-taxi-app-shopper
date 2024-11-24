@@ -61,13 +61,18 @@ export class RideController implements IRideController {
   };
   getRideHistory: RequestHandler = async (req, res, next) => {
     const { customer_id } = req.params;
+    const { driver_id } = req.query;
 
     if (!customer_id) {
       res.status(400).json({ error: 'Customer ID is required' });
     }
 
     try {
-      const rides = await this.rideService.getRideHistory(customer_id);
+      const driverId = driver_id ? Number(driver_id) : undefined;
+      const rides = await this.rideService.getRideHistory(
+        customer_id,
+        driverId,
+      );
 
       res.status(200).json(rides);
     } catch (error) {

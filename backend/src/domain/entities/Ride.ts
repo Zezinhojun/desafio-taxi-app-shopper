@@ -2,6 +2,7 @@ import { Driver } from './Driver';
 import { Location } from './Location';
 
 export interface RideParams {
+  id?: number;
   customerId: string;
   origin: Location;
   destination: Location;
@@ -13,6 +14,7 @@ export interface RideParams {
 }
 
 export class Ride {
+  private readonly _id: number;
   private readonly _customerId: string;
   private readonly _origin: Location;
   private readonly _destination: Location;
@@ -23,6 +25,7 @@ export class Ride {
   private readonly _date: Date;
 
   constructor({
+    id,
     customerId,
     origin,
     destination,
@@ -32,6 +35,7 @@ export class Ride {
     value,
     date,
   }: RideParams) {
+    this._id = id || Ride.generateId();
     this._customerId = customerId;
     this._origin = origin;
     this._destination = destination;
@@ -40,6 +44,10 @@ export class Ride {
     this._driver = driver;
     this._value = value;
     this._date = date;
+  }
+
+  get id(): number {
+    return this._id;
   }
 
   get customerId(): string {
@@ -76,5 +84,11 @@ export class Ride {
 
   estimateRide(): number {
     return this._driver.calculateRideValue(this._distance);
+  }
+
+  private static generateId(): number {
+    const uuid = crypto.randomUUID();
+    const numericId = parseInt(uuid.replace(/\D/g, '').slice(0, 7), 10);
+    return numericId;
   }
 }

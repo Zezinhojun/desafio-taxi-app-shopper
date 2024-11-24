@@ -88,6 +88,7 @@ export const setupTest = <T>(
     const getRideHistoryUseCase = new GetRideHistoryUseCase(
       rideRepository,
       customerRepository,
+      driverRepository,
     );
 
     rideService = new RideService(
@@ -152,5 +153,6 @@ export const mockGetRideHistoryUseCaseFactory = (): GetRideHistoryUseCase => {
   return new GetRideHistoryUseCase(
     new InMemoryRideRepository(),
     new InMemoryCustomerRepository(),
+    new InMemoryDriverRepository(),
   );
 };

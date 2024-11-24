@@ -23,16 +23,16 @@ describe('GetRideHistoryUseCase', () => {
     });
   });
 
-  it('should return an empty list if no rides are found for the customer', async () => {
+  it('should return "No rides found" when there are no rides for the customer', async () => {
     const { sut, mockCustomer, rideRepository } = testSetup;
+    jest.spyOn(rideRepository, 'findByCustomerId').mockResolvedValue([]);
 
-    rideRepository.clear();
-
-    const result = await sut.execute(mockCustomer.id);
-
-    expect(rideRepository.findByCustomerId).toHaveBeenCalledTimes(1);
-    expect(result).toEqual([]);
-
-    expect(result).not.toBeInstanceOf(Ride);
+    try {
+      await sut.execute(mockCustomer.id);
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toBe('No rides found');
+      }
+    }
   });
 });

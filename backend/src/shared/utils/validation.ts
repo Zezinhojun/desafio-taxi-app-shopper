@@ -82,4 +82,32 @@ export class RideValidator {
     }
     next();
   };
+
+  public static readonly validateCustomerAndDriver: RequestHandler = (
+    req,
+    res,
+    next,
+  ) => {
+    const { customer_id } = req.params;
+    const { driver_id } = req.query;
+
+    if (!customer_id) {
+      res.status(400).json({
+        error_code: 'INVALID_DATA',
+        error_description: 'The customer ID is missing.',
+      });
+      return;
+    }
+
+    if (driver_id && isNaN(Number(driver_id))) {
+      res.status(400).json({
+        error_code: 'INVALID_DRIVER',
+        error_description:
+          'The driver ID is invalid. Please provide a valid numeric driver ID.',
+      });
+      return;
+    }
+
+    next();
+  };
 }

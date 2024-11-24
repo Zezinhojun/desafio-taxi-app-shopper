@@ -41,6 +41,7 @@ export class ConfirmRideUseCase {
     }
 
     const newRide: RideParams = {
+      id: rideDetails.id,
       customerId,
       origin: rideDetails.origin,
       destination: rideDetails.destination,

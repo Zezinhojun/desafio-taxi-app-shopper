@@ -28,8 +28,11 @@ export class RideRoutes {
       this.rideController.confirmRide,
     );
 
+    this.router.get('/history', RideValidator.validateCustomerAndDriver);
+
     this.router.get(
       '/history/:customer_id',
+      RideValidator.validateCustomerAndDriver,
       this.rideController.getRideHistory,
     );
   }

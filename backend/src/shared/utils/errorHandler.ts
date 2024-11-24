@@ -18,6 +18,14 @@ class ErrorHandler {
       return;
     }
 
+    if (err.message === 'No rides found') {
+      res.status(404).json({
+        error_code: 'NO_RIDES_FOUND',
+        error_description: 'No rides found for the specified customer.',
+      });
+      return;
+    }
+
     if (err.message === 'Invalid distance for this driver') {
       res.status(406).json({
         error_code: 'INVALID_DISTANCE',
