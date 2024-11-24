@@ -4,7 +4,7 @@ import { RideService } from '@domain/services/RideService';
 import { RequestHandler } from 'express';
 
 export class RideController implements IRideController {
-  constructor(private readonly rideService: RideService) {}
+  constructor(private readonly rideService: RideService) { }
 
   estimateRide: RequestHandler = async (req, res, next) => {
     const { customer_id, origin, destination } = req.body;
@@ -15,6 +15,7 @@ export class RideController implements IRideController {
         origin,
         destination,
       });
+
       res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -57,11 +58,11 @@ export class RideController implements IRideController {
 
     if (!customer_id) {
       res.status(400).json({ error: 'Customer ID is required' });
-      return;
     }
 
     try {
       const rides = await this.rideService.getRideHistory(customer_id);
+
       res.status(200).json(rides);
     } catch (error) {
       next(error);

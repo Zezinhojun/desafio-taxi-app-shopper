@@ -10,9 +10,11 @@ import { RideController } from '@presentation/controllers/RideController';
 import { RideRoutes } from '@presentation/routes/rideRoutes';
 import ErrorHandler from '@shared/utils/errorHandler';
 import express from 'express';
+import cors from 'cors'
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 const googleDataSource = new GoogleMapsDataSource();
 const rideRepository = new RideRepository();
@@ -40,7 +42,7 @@ const rideService = new RideService(
 const rideController = new RideController(rideService);
 const rideRoutes = new RideRoutes(rideController);
 
-app.use('/api/rides', rideRoutes.router);
+app.use('/rides', rideRoutes.router);
 
 app.use(ErrorHandler.handleErrors);
 const PORT = process.env.PORT ?? 3000;
