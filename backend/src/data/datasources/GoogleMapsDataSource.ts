@@ -1,6 +1,8 @@
 import { Location } from '@domain/entities/Location';
 import axios from 'axios';
+import { injectable } from 'inversify';
 
+@injectable()
 export class GoogleMapsDataSource {
   private readonly apiKey: string;
   constructor() {

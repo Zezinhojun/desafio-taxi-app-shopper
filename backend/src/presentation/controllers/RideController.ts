@@ -1,10 +1,16 @@
 import { Ride } from '@domain/entities/Ride';
 import { IRideController } from '@domain/interfaces/IRideController';
 import { RideService } from '@domain/services/RideService';
+import { TYPES } from '@shared/di/Types';
 import { RequestHandler } from 'express';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class RideController implements IRideController {
-  constructor(private readonly rideService: RideService) { }
+  constructor(
+    @inject(TYPES.RideService)
+    private readonly rideService: RideService,
+  ) {}
 
   estimateRide: RequestHandler = async (req, res, next) => {
     const { customer_id, origin, destination } = req.body;

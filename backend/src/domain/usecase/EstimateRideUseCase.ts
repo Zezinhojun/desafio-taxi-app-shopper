@@ -5,6 +5,8 @@ import {
   RideEstimateParams,
 } from '@domain/entities/RideEstimate';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
+import { TYPES } from '@shared/di/Types';
+import { inject } from 'inversify';
 
 export interface EstimateRideParams {
   customerId: string;
@@ -14,9 +16,11 @@ export interface EstimateRideParams {
 
 export class EstimateRideUseCase {
   constructor(
+    @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
+    @inject(TYPES.GoogleMapsDataSource)
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) { }
+  ) {}
 
   async execute({
     customerId,

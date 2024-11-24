@@ -1,6 +1,8 @@
 import { Customer } from '@domain/entities/Customer';
 import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
+import { injectable } from 'inversify';
 
+@injectable()
 export class CustomerRepository implements ICustomerRepository {
   private readonly customers: Customer[] = [
     new Customer({

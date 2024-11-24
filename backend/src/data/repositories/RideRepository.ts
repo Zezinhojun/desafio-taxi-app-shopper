@@ -1,6 +1,8 @@
 import { Ride } from '@domain/entities/Ride';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
+import { injectable } from 'inversify';
 
+@injectable()
 export class RideRepository implements IRideRepository {
   private readonly rides: Ride[] = [];
 

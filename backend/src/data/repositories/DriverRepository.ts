@@ -2,7 +2,9 @@ import { Driver } from '@domain/entities/Driver';
 import { Review } from '@domain/entities/Review';
 import { Vehicle } from '@domain/entities/Vehicle';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
+import { injectable } from 'inversify';
 
+@injectable()
 export class DriverRepository implements IDriverRepository {
   private readonly drivers: Driver[] = [
     new Driver({

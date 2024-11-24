@@ -4,6 +4,8 @@ import { RideEstimate } from '@domain/entities/RideEstimate';
 import { ConfirmRideUseCase } from '@domain/usecase/ConfirmRideUserCase';
 import { EstimateRideUseCase } from '@domain/usecase/EstimateRideUseCase';
 import { RideEstimateDTO, RideDTO, RideHistoryDTO } from './dto/RideDTO';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '@shared/di/Types';
 
 export interface EstimateRideParams {
   customerId: string;
@@ -16,12 +18,16 @@ export interface ConfirmRideParams {
   rideDetails: Ride;
 }
 
+@injectable()
 export class RideService {
   constructor(
+    @inject(TYPES.ConfirmRideUseCase)
     private readonly confirmRideUseCase: ConfirmRideUseCase,
+    @inject(TYPES.EstimateRideUseCase)
     private readonly estimateRideUseCase: EstimateRideUseCase,
+    @inject(TYPES.GetRideHistoryUseCase)
     private readonly getRideHistoryUseCase: GetRideHistoryUseCase,
-  ) { }
+  ) {}
 
   private mapToRideEstimateDTO(estimate: RideEstimate): RideEstimateDTO {
     const availableDrivers = estimate.listAvailableDrivers();

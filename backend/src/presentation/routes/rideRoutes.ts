@@ -1,10 +1,16 @@
 import { IRideController } from '@domain/interfaces/IRideController';
+import { TYPES } from '@shared/di/Types';
 import { RideValidator } from '@shared/utils/validation';
 import { Router } from 'express';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class RideRoutes {
   public readonly router: Router;
-  constructor(private readonly rideController: IRideController) {
+  constructor(
+    @inject(TYPES.RideController)
+    private readonly rideController: IRideController,
+  ) {
     this.router = Router();
     this.initializeRoutes();
   }
