@@ -18,6 +18,14 @@ class ErrorHandler {
       return;
     }
 
+    if (err.message === 'Customer not found') {
+      res.status(404).json({
+        error_code: 'CUSTOMER_NOT_FOUND',
+        error_description: 'Customer not found',
+      });
+      return;
+    }
+
     if (err.message === 'No rides found') {
       res.status(404).json({
         error_code: 'NO_RIDES_FOUND',

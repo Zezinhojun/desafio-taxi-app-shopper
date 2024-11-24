@@ -1,6 +1,7 @@
 import { GetRideHistoryUseCase } from '@domain/usecase/GetRideHistoryUseCase';
 import { setupTest, TestSetup } from '../../utils/testSetup';
 import { Ride } from '@domain/entities/Ride';
+import { mockRideFactory } from '../entities/Ride.spec';
 
 describe('GetRideHistoryUseCase', () => {
   let testSetup: TestSetup<GetRideHistoryUseCase>;
@@ -34,5 +35,25 @@ describe('GetRideHistoryUseCase', () => {
         expect(error.message).toBe('No rides found');
       }
     }
+  });
+
+  it('should return rides sorted by date in descending order', async () => {
+    const { sut, mockCustomer, rideRepository } = testSetup;
+
+    const olderRide = mockRideFactory({
+      customerId: mockCustomer.id,
+      date: new Date('2024-01-01')
+    });
+
+    const newerRide = mockRideFactory({
+      customerId: mockCustomer.id,
+      date: new Date('2024-02-01')
+    });
+
+    rideRepository.ridesList = [olderRide, newerRide];
+
+    const result = await sut.execute(mockCustomer.id);
+
+    expect(result[0].date.getTime()).toBeGreaterThan(result[1].date.getTime());
   });
 });
