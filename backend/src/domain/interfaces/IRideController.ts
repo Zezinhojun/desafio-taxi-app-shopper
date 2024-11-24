@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { RequestHandler } from 'express';
 
 export interface IRideController {
-  estimateRide(req: Request, res: Response): Promise<Response>;
-  confirmRide(req: Request, res: Response): Promise<Response>;
-  getRideHistory(req: Request, res: Response): Promise<Response>;
+  estimateRide: RequestHandler;
+  confirmRide: RequestHandler;
+  getRideHistory: RequestHandler;
 }

@@ -34,12 +34,24 @@ export class RideEstimate {
     this._routeResponse = routeResponse;
   }
 
+  get origin() {
+    return this._origin;
+  }
+
+  get destination() {
+    return this._destination;
+  }
+
   get distance() {
     return this._distance;
   }
 
   get duration() {
     return this._duration;
+  }
+
+  get routeResponse() {
+    return this._routeResponse;
   }
 
   get availableDrivers(): Driver[] {

@@ -29,7 +29,7 @@ describe('EstimateRideUseCase', () => {
     expect(googleMapsDataSource?.geocodeAddress).toHaveBeenCalledWith(
       destination,
     );
-    expect(googleMapsDataSource?.calculateRote).toHaveBeenCalled();
+    expect(googleMapsDataSource?.calculateRoute).toHaveBeenCalled();
     expect(result).toBeInstanceOf(RideEstimate);
     expect(result.distance).toBe(10);
     expect(result.duration).toBe('15m');

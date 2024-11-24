@@ -63,7 +63,7 @@ export const setupTest = <T>(
     googleMapsDataSource.geocodeAddress = jest
       .fn()
       .mockImplementation(async () => mockLocation);
-    googleMapsDataSource.calculateRote = jest.fn().mockResolvedValue({
+    googleMapsDataSource.calculateRoute = jest.fn().mockResolvedValue({
       distance: 10,
       duration: '15m',
       polyline: 'mock-polyline',
@@ -71,7 +71,7 @@ export const setupTest = <T>(
     });
   } else {
     googleMapsDataSource.geocodeAddress = jest.fn();
-    googleMapsDataSource.calculateRote = jest.fn();
+    googleMapsDataSource.calculateRoute = jest.fn();
   }
 
   let sut: T;

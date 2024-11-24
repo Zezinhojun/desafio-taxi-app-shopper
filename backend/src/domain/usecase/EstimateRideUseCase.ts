@@ -33,7 +33,7 @@ export class EstimateRideUseCase {
     const destinationLocation =
       await this.googleMapsDataSource.geocodeAddress(destination);
 
-    const routeDetails = await this.googleMapsDataSource.calculateRote(
+    const routeDetails = await this.googleMapsDataSource.calculateRoute(
       originLocation,
       destinationLocation,
     );
