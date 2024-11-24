@@ -1,6 +1,8 @@
 import { Location } from '@domain/entities/Location';
 import axios from 'axios';
+import { injectable } from 'inversify';
 
+@injectable()
 export class GoogleMapsDataSource {
   private readonly apiKey: string;
   constructor() {
@@ -34,7 +36,7 @@ export class GoogleMapsDataSource {
     }
   }
 
-  async calculateRote(origin: Location, destination: Location) {
+  async calculateRoute(origin: Location, destination: Location) {
     const routeUrl =
       'https://routes.googleapis.com/directions/v2:computeRoutes';
     try {

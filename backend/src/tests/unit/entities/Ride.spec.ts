@@ -7,7 +7,8 @@ export const mockRideFactory = (overrides: Partial<RideParams> = {}): Ride => {
   const driver = mockDriverFactory();
   const distance = faker.number.int({ min: 1, max: 100 });
   const rideParams = {
-    customerId: faker.string.uuid(),
+    id: overrides.id ?? faker.number.int({ min: 1000000, max: 9999999 }),
+    customerId: overrides.customerId ?? faker.string.uuid(),
     origin: mockLocationFactory(),
     destination: mockLocationFactory(),
     distance: distance,
@@ -24,6 +25,7 @@ export const mockRideFactory = (overrides: Partial<RideParams> = {}): Ride => {
 describe('Ride', () => {
   let ride: Ride;
   beforeEach(() => {
+    jest.resetAllMocks();
     ride = mockRideFactory();
   });
 

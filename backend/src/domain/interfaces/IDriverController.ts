@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 export interface IDriverController {
-    listDriver(req: Request, res: Response): Promise<Response>
+  listDriver(req: Request, res: Response): Promise<Response>;
 }

@@ -16,7 +16,7 @@ export const mockRideEstimateFactory = (): RideEstimate => {
     destination: mockDestination,
     distance: faker.number.int({ min: 1, max: 100 }),
     duration: `${faker.number.int({ min: 10, max: 60 })}min`,
-    availableDrivers: mockDrivers,
+    options: mockDrivers,
     routeResponse: {},
   };
 
@@ -26,6 +26,7 @@ export const mockRideEstimateFactory = (): RideEstimate => {
 describe('RideEstimate', () => {
   let rideEstimate: RideEstimate;
   beforeEach(() => {
+    jest.resetAllMocks();
     rideEstimate = mockRideEstimateFactory();
   });
 

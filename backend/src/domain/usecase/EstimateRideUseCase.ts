@@ -1,9 +1,12 @@
 import { GoogleMapsDataSource } from '@data/datasources/GoogleMapsDataSource';
+import { Driver } from '@domain/entities/Driver';
 import {
   RideEstimate,
   RideEstimateParams,
 } from '@domain/entities/RideEstimate';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
+import { TYPES } from '@shared/di/Types';
+import { inject } from 'inversify';
 
 export interface EstimateRideParams {
   customerId: string;
@@ -13,7 +16,9 @@ export interface EstimateRideParams {
 
 export class EstimateRideUseCase {
   constructor(
+    @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
+    @inject(TYPES.GoogleMapsDataSource)
     private readonly googleMapsDataSource: GoogleMapsDataSource,
   ) {}
 
@@ -23,7 +28,7 @@ export class EstimateRideUseCase {
     destination,
   }: EstimateRideParams): Promise<RideEstimate> {
     if (!customerId || !origin || !destination || origin === destination) {
-      throw new Error('Invalid ride parameters');
+      throw new Error('INVALID_DATA');
     }
 
     const originLocation =
@@ -32,7 +37,7 @@ export class EstimateRideUseCase {
     const destinationLocation =
       await this.googleMapsDataSource.geocodeAddress(destination);
 
-    const routeDetails = await this.googleMapsDataSource.calculateRote(
+    const routeDetails = await this.googleMapsDataSource.calculateRoute(
       originLocation,
       destinationLocation,
     );
@@ -45,12 +50,24 @@ export class EstimateRideUseCase {
       routeDetails.distance,
     );
 
+    const mappedDrivers = availableDrivers.map((driver) => {
+      return new Driver({
+        id: driver.id,
+        name: driver.name,
+        description: driver.description,
+        vehicle: driver.vehicle,
+        ratePerKm: driver.ratePerKm,
+        minimumDistance: driver.minimumDistance,
+        review: driver.review,
+      });
+    });
+
     const rideEstimateParams: RideEstimateParams = {
       origin: originLocation,
       destination: destinationLocation,
       distance: routeDetails.distance,
       duration: routeDetails.duration,
-      availableDrivers: availableDrivers,
+      options: mappedDrivers,
       routeResponse: routeDetails.originalResponse,
     };
 

@@ -3,11 +3,17 @@ import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
 import { ConfirmRideParams } from '@domain/services/RideService';
+import { TYPES } from '@shared/di/Types';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class ConfirmRideUseCase {
   constructor(
+    @inject(TYPES.RideRepository)
     private readonly rideRepository: IRideRepository,
+    @inject(TYPES.CustomerRepository)
     private readonly customerRepository: ICustomerRepository,
+    @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
   ) {}
 
@@ -35,6 +41,7 @@ export class ConfirmRideUseCase {
     }
 
     const newRide: RideParams = {
+      id: rideDetails.id,
       customerId,
       origin: rideDetails.origin,
       destination: rideDetails.destination,
