@@ -42,12 +42,12 @@ describe('GetRideHistoryUseCase', () => {
 
     const olderRide = mockRideFactory({
       customerId: mockCustomer.id,
-      date: new Date('2024-01-01')
+      date: new Date('2024-01-01'),
     });
 
     const newerRide = mockRideFactory({
       customerId: mockCustomer.id,
-      date: new Date('2024-02-01')
+      date: new Date('2024-02-01'),
     });
 
     rideRepository.ridesList = [olderRide, newerRide];

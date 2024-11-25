@@ -8,11 +8,11 @@ services:
       container_name: backend-taxi-api
       environment:
         - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-        - DB_HOST=db
-        - DB_PORT=3306
-        - DB_USERNAME=root
-        - DB_PASSWORD=password
-        - DB_NAME=taxi_app
+        - DB_HOST=${DB_HOST:-db}
+        - DB_PORT=${DB_PORT:-3306}
+        - DB_USERNAME=${DB_USERNAME:-root}
+        - DB_PASSWORD=${DB_PASSWORD:-password}
+        - DB_NAME=${DB_NAME:-taxi_app}
         - PORT=${PORT:-8080} 
       ports:
         - "8080:8080"
