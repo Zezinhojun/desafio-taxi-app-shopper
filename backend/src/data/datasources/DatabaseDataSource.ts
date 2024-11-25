@@ -1,5 +1,10 @@
-import path from 'path';
 import { DataSource } from 'typeorm';
+import { DriverORM } from './entities/Driver';
+import { RideORM } from './entities/Ride';
+import { CustomerORM } from './entities/Customer';
+import { ReviewORM } from './entities/Review';
+import { LocationORM } from './entities/Location';
+import { VehicleORM } from './entities/Vehicle';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -10,7 +15,11 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME ?? 'taxi_app',
   synchronize: true,
   entities: [
-    path.join(__dirname + '/../src/data/datasources/entities'),
-    path.join(__dirname + '/../dist/data/datasources/entities'),
+    VehicleORM,
+    DriverORM,
+    RideORM,
+    CustomerORM,
+    ReviewORM,
+    LocationORM,
   ],
 });

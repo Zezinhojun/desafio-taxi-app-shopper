@@ -41,6 +41,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "inversify": "^6.1.4",
+    "inversify-typeorm": "^0.0.4",
     "mysql2": "^3.11.4",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20"

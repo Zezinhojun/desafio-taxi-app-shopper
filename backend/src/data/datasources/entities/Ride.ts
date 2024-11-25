@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { CustomerORM } from './Customer';
 import { DriverORM } from './Driver';
-import { Location } from '@domain/entities/Location';
+import { LocationORM } from './Location';
 
 @Entity('rides')
 export class RideORM {
@@ -21,13 +21,13 @@ export class RideORM {
   @ManyToOne(() => DriverORM, (driver) => driver.rides)
   driver: DriverORM;
 
-  @OneToOne(() => Location)
+  @OneToOne(() => LocationORM)
   @JoinColumn()
-  origin: Location;
+  origin: LocationORM;
 
-  @OneToOne(() => Location)
+  @OneToOne(() => LocationORM)
   @JoinColumn()
-  destination: Location;
+  destination: LocationORM;
 
   @Column('decimal', { precision: 10, scale: 2 })
   distance: number;

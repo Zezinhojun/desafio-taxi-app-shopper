@@ -30,16 +30,16 @@ export class RideMapper {
     const ormEntity = new RideORM();
     ormEntity.id = domainEntity.id;
     ormEntity.customer.id = domainEntity.customerId;
-    ormEntity.origin = new Location({
+    ormEntity.origin = {
       address: domainEntity.origin.address,
       latitude: domainEntity.origin.latitude,
       longitude: domainEntity.origin.longitude,
-    });
-    ormEntity.destination = new Location({
+    };
+    ormEntity.destination = {
       address: domainEntity.destination.address,
       latitude: domainEntity.destination.latitude,
       longitude: domainEntity.destination.longitude,
-    });
+    };
     ormEntity.distance = domainEntity.distance;
     ormEntity.duration = domainEntity.duration;
     ormEntity.driver = DriverMapper.toOrm(domainEntity.driver);

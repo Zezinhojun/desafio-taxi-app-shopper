@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 
 export const mockVehicleFactory = (): Vehicle => {
   const vehicle: VehicleParams = {
+    id: faker.string.uuid(),
     model: faker.vehicle.model(),
     description: faker.lorem.sentence(),
   };

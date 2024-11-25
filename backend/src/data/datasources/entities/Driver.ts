@@ -1,33 +1,29 @@
-import { Review } from '@domain/entities/Review';
-import { Ride } from '@domain/entities/Ride';
-import { Vehicle } from '@domain/entities/Vehicle';
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ReviewORM } from './Review';
+import { VehicleORM } from './Vehicle';
 
 @Entity('drivers')
 export class DriverORM {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column('varchar')
   name: string;
 
   @Column('text')
   description: string;
 
-  @Column(() => Vehicle)
-  @JoinColumn()
-  vehicle: Vehicle;
+  @OneToOne(() => VehicleORM, (vehicle) => vehicle.driver)
+  vehicle: VehicleORM;
 
-  @OneToOne(() => Review)
-  @JoinColumn()
-  review: Review;
+  @OneToMany(() => ReviewORM, (review) => review.driver, { cascade: true })
+  reviews: ReviewORM[];
 
   @Column('decimal', { precision: 10, scale: 2 })
   ratePerKm: number;
@@ -35,6 +31,6 @@ export class DriverORM {
   @Column('int')
   minimumDistance: number;
 
-  @OneToMany(() => Ride, (ride) => ride.driver)
-  rides: Ride[];
+  @OneToMany(() => ReviewORM, (ride) => ride.driver)
+  rides: ReviewORM[];
 }

@@ -1,22 +1,32 @@
 import { DriverORM } from '@data/datasources/entities/Driver';
 import { Driver } from '@domain/entities/Driver';
+import { ReviewMapper } from './ReviewMapper';
+import { ReviewORM } from '@data/datasources/entities/Review';
 import { Review } from '@domain/entities/Review';
-import { Vehicle } from '@domain/entities/Vehicle';
+import { VehicleMapper } from './VehicleMapper';
 
 export class DriverMapper {
   static toDomain(ormEntity: DriverORM): Driver {
+    const review =
+      ormEntity.reviews.length > 0
+        ? ReviewMapper.toDomain(ormEntity.reviews[0])
+        : new Review({
+            rating: 5,
+            comment: 'Very Good',
+          });
+
+    if (!ormEntity.vehicle) {
+      throw new Error('DriverORM must have a Vehicle associated.');
+    }
+
+    const vehicle = VehicleMapper.toDomain(ormEntity.vehicle);
+
     return new Driver({
       id: ormEntity.id,
       name: ormEntity.name,
       description: ormEntity.description,
-      vehicle: new Vehicle({
-        model: ormEntity.vehicle.model,
-        description: ormEntity.vehicle.description,
-      }),
-      review: new Review({
-        rating: ormEntity.review.rating,
-        comment: ormEntity.review.comment,
-      }),
+      vehicle: vehicle,
+      review: review,
       ratePerKm: ormEntity.ratePerKm,
       minimumDistance: ormEntity.minimumDistance,
     });
@@ -27,14 +37,26 @@ export class DriverMapper {
     ormEntity.id = domainEntity.id;
     ormEntity.name = domainEntity.name;
     ormEntity.description = domainEntity.description;
-    ormEntity.vehicle = new Vehicle({
-      model: domainEntity.vehicle.model,
-      description: domainEntity.vehicle.description,
-    });
-    ormEntity.review = new Review({
-      rating: domainEntity.review.rating,
-      comment: domainEntity.review.comment,
-    });
+    if (domainEntity.vehicle) {
+      ormEntity.vehicle = {
+        id: domainEntity.vehicle.id,
+        model: domainEntity.vehicle.model,
+        description: domainEntity.vehicle.description,
+        driver: ormEntity,
+      };
+    }
+    if (domainEntity.review) {
+      if (ormEntity.reviews.length > 0) {
+        const review = ormEntity.reviews[0];
+        review.rating = domainEntity.review.rating;
+        review.comment = domainEntity.review.comment;
+      } else {
+        const newReview = new ReviewORM();
+        newReview.rating = domainEntity.review.rating;
+        newReview.comment = domainEntity.review.comment;
+        ormEntity.reviews.push(newReview);
+      }
+    }
     ormEntity.ratePerKm = domainEntity.ratePerKm;
     ormEntity.minimumDistance = domainEntity.minimumDistance;
     return ormEntity;
