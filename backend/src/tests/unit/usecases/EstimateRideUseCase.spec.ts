@@ -1,6 +1,6 @@
 import { EstimateRideUseCase } from '@domain/usecase/EstimateRideUseCase';
 import { RideEstimate } from '@domain/entities/RideEstimate';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 import { setupTest } from '../../utils/testSetup';
 
 describe('EstimateRideUseCase', () => {

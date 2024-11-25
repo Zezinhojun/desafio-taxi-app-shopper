@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "baseUrl": "./src",
     "paths": {
       "@domain/*": ["domain/*"],

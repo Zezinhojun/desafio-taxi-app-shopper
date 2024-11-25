@@ -1,5 +1,5 @@
 import { Location, LocationParams } from '@domain/entities/Location';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 
 export const mockLocationFactory = (): Location => {
   const locationParams: LocationParams = {

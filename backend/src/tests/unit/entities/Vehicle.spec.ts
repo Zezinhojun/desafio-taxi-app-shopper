@@ -1,5 +1,5 @@
 import { Vehicle, VehicleParams } from '@domain/entities/Vehicle';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 
 export const mockVehicleFactory = (): Vehicle => {
   const vehicle: VehicleParams = {

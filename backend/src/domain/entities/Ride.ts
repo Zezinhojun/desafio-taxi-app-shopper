@@ -1,5 +1,6 @@
 import { Driver } from './Driver';
 import { Location } from './Location';
+import { randomUUID } from 'crypto';
 
 export interface RideParams {
   id?: number;
@@ -87,7 +88,7 @@ export class Ride {
   }
 
   private static generateId(): number {
-    const uuid = crypto.randomUUID();
+    const uuid = randomUUID();
     const numericId = parseInt(uuid.replace(/\D/g, '').slice(0, 7), 10);
     return numericId;
   }
