@@ -6,20 +6,20 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Customer } from './Customer';
-import { Driver } from './Driver';
+import { CustomerORM } from './Customer';
+import { DriverORM } from './Driver';
 import { Location } from '@domain/entities/Location';
 
 @Entity('rides')
-export class Ride {
+export class RideORM {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Customer, (customer) => customer.rides)
-  customer: Customer;
+  @ManyToOne(() => CustomerORM, (customer) => customer.rides)
+  customer: CustomerORM;
 
-  @ManyToOne(() => Driver, (driver) => driver.rides)
-  driver: Driver;
+  @ManyToOne(() => DriverORM, (driver) => driver.rides)
+  driver: DriverORM;
 
   @OneToOne(() => Location)
   @JoinColumn()

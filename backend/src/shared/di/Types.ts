@@ -9,4 +9,6 @@ export const TYPES = {
   EstimateRideUseCase: Symbol.for('EstimateRideUseCase'),
   GetRideHistoryUseCase: Symbol.for('GetRideHistoryUseCase'),
   ConfirmRideUseCase: Symbol.for('ConfirmRideUseCase'),
+  CustomerTypeOrmRepository: Symbol('CustomerTypeOrmRepository'),
+  DataSource: Symbol('DataSource'),
 };
