@@ -2,7 +2,7 @@ import { CustomerORM } from '@data/datasources/entities/Customer';
 import { Customer } from '@domain/entities/Customer';
 import { RideMapper } from './RideMapper';
 
-export class CustomMapper {
+export class CustomerMapper {
   static toDomain(ormEntity: CustomerORM): Customer {
     return new Customer({
       id: ormEntity.id,

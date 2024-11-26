@@ -33,7 +33,9 @@ async function initializeContainer() {
   await initializeDataSource();
 
   container.bind<DataSource>(TYPES.DataSource).toConstantValue(AppDataSource);
-  container.bind<IDriverRepository>(TYPES.DriverRepository).to(DriverRepository)
+  container
+    .bind<IDriverRepository>(TYPES.DriverRepository)
+    .to(DriverRepository);
 
   container.bind<IRideRepository>(TYPES.RideRepository).to(RideRepository);
   container

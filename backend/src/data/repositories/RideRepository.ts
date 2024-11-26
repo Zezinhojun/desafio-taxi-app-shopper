@@ -29,6 +29,7 @@ export class RideRepository implements IRideRepository {
         description:
           'Ei, aqui é o Dom. Pode entrar, vou te levar com segurança e rapidez ao seu destino. Só não mexa no rádio, a playlist é sagrada.',
         vehicle: new Vehicle({
+          id: '2',
           model: 'Dodge Charger R/T 1970 modificado',
           description: 'Veículo potente e modificado para corridas.',
         }),
@@ -63,6 +64,7 @@ export class RideRepository implements IRideRepository {
         description:
           'Boa noite, sou James Bond. À seu dispor para um passeio suave e discreto. Aperte o cinto e aproveite a viagem.',
         vehicle: new Vehicle({
+          id: '3',
           model: 'Aston Martin DB5 clássico',
           description: 'Carro clássico e elegante com recursos secretos.',
         }),

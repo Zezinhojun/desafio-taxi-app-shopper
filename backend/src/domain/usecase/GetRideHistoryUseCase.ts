@@ -14,7 +14,7 @@ export class GetRideHistoryUseCase {
     private readonly customerRepository: ICustomerRepository,
     @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
-  ) { }
+  ) {}
 
   async execute(customerId: string, driverId?: number): Promise<Ride[]> {
     const customer = await this.customerRepository.findById(customerId);
@@ -39,7 +39,10 @@ export class GetRideHistoryUseCase {
       if (filteredRides.length === 0) {
         throw new Error('No rides found');
       }
-      console.log('Dentro de getridehistoryUseCase as filteredRides: ', filteredRides)
+      console.log(
+        'Dentro de getridehistoryUseCase as filteredRides: ',
+        filteredRides,
+      );
       return filteredRides;
     }
 

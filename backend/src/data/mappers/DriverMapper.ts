@@ -7,7 +7,10 @@ import { VehicleMapper } from './VehicleMapper';
 
 export class DriverMapper {
   static toDomain(ormEntity: DriverORM): Driver {
-    console.log('DriverMapper - Mapeando driver:', JSON.stringify(ormEntity, null, 2));
+    console.log(
+      'DriverMapper - Mapeando driver:',
+      JSON.stringify(ormEntity, null, 2),
+    );
 
     // Log detalhado de cada propriedade
     console.log('Vehicle:', ormEntity.vehicle);
@@ -17,9 +20,9 @@ export class DriverMapper {
       ormEntity.reviews.length > 0
         ? ReviewMapper.toDomain(ormEntity.reviews[0])
         : new Review({
-          rating: 5,
-          comment: 'Very Good',
-        });
+            rating: 5,
+            comment: 'Very Good',
+          });
 
     if (!ormEntity.vehicle) {
       throw new Error('DriverORM must have a Vehicle associated.');
