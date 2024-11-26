@@ -18,6 +18,7 @@ import { DriverRepository } from '@data/repositories/DriverRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 import { DriverSeedService } from 'seeds/driver.seed';
 import mysql from 'mysql2/promise';
+import { CustomerSeedService } from 'seeds/customer.seed';
 
 const container = new Container();
 
@@ -83,7 +84,14 @@ async function initializeContainer() {
   const driverSeedService = container.get<DriverSeedService>(
     TYPES.DriverSeedService,
   );
+  container
+    .bind<CustomerSeedService>(TYPES.CustomerSeedService)
+    .to(CustomerSeedService);
+  const customerSeedService = container.get<CustomerSeedService>(
+    TYPES.CustomerSeedService,
+  );
   await driverSeedService.seedDrivers();
+  await customerSeedService.seedCustomer();
 }
 
 export { container, initializeContainer };

@@ -11,4 +11,5 @@ export const TYPES = {
   ConfirmRideUseCase: Symbol.for('ConfirmRideUseCase'),
   DataSource: Symbol('DataSource'),
   DriverSeedService: Symbol.for('DriverSeedService'),
+  CustomerSeedService: Symbol.for('CustomerSeedService'),
 };
