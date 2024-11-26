@@ -24,6 +24,9 @@ export class RideRepository implements IRideRepository {
   }
 
   async findByCustomerId(customerId: string): Promise<Ride[]> {
+    console.log(`Finding rides for customer ID: ${customerId}`);
+  
+    // Buscar as corridas no banco de dados
     const ridesOrm = await this.rideRepository.find({
       where: { customer: { id: customerId } },
       relations: [
@@ -35,7 +38,19 @@ export class RideRepository implements IRideRepository {
         'destination',
       ],
     });
-    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : [];
+  
+    // Verificar se as corridas foram encontradas
+    console.log(`Rides ORM fetched: ${ridesOrm.length} rides found`);
+  
+    // Mapear para o modelo de domínio
+    const mappedRides = ridesOrm ? ridesOrm.map((ride) => {
+      console.log("Mapping ride:", ride);  // Logando cada corrida antes do mapeamento
+      return RideMapper.toDomain(ride);
+    }) : [];
+  
+    console.log(`Mapped rides: ${mappedRides.length} rides mapped`);
+  
+    return mappedRides;
   }
   async findByDriverId(driverId: number): Promise<Ride[]> {
     const ridesOrm = await this.rideRepository.find({

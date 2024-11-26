@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -19,16 +20,17 @@ export class DriverORM {
   @Column('text')
   description: string;
 
-  @OneToOne(() => VehicleORM, (vehicle) => vehicle.driver)
+  @OneToOne(() => VehicleORM)
+  @JoinColumn()
   vehicle: VehicleORM;
 
   @OneToMany(() => ReviewORM, (review) => review.driver, { cascade: true })
   reviews: ReviewORM[];
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('float')
   ratePerKm: number;
 
-  @Column('int')
+  @Column('float')
   minimumDistance: number;
 
   @OneToMany(() => ReviewORM, (ride) => ride.driver)

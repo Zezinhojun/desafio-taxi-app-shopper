@@ -11,7 +11,7 @@ export class DriverRepository implements IDriverRepository {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   private get driverRepository(): Repository<DriverORM> {
     return this.dataSource.getRepository(DriverORM);
@@ -19,10 +19,14 @@ export class DriverRepository implements IDriverRepository {
 
   async findById(id: number): Promise<Driver | null> {
     const driverOrm = await this.driverRepository.findOne({
-      where: { id },
-      relations: ['vehicle', 'reviews'],
+      where: { id: id },
     });
-    return driverOrm ? DriverMapper.toDomain(driverOrm) : null;
+
+    if (!driverOrm) {
+      return null
+    }
+
+    return DriverMapper.toDomain(driverOrm);
   }
 
   async findEligibleDrivers(distance: number): Promise<Driver[]> {

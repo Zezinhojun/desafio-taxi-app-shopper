@@ -6,7 +6,7 @@ export class CustomerMapper {
   static toDomain(ormEntity: CustomerORM): Customer {
     return new Customer({
       id: ormEntity.id,
-      rideHistory: ormEntity.rides.map((ride) => RideMapper.toDomain(ride)),
+      rideHistory: ormEntity.rides ? ormEntity.rides.map((ride) => RideMapper.toDomain(ride)) : [],
     });
   }
 

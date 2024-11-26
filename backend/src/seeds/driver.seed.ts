@@ -1,6 +1,9 @@
 import { DriverORM } from '@data/datasources/entities/Driver';
-import { ReviewORM } from '@data/datasources/entities/Review';
 import { VehicleORM } from '@data/datasources/entities/Vehicle';
+import { DriverMapper } from '@data/mappers/DriverMapper';
+import { Driver } from '@domain/entities/Driver';
+import { Review } from '@domain/entities/Review';
+import { Vehicle } from '@domain/entities/Vehicle';
 import { TYPES } from '@shared/di/Types';
 import { inject, injectable } from 'inversify';
 import { DataSource } from 'typeorm';
@@ -10,10 +13,11 @@ export class DriverSeedService {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async seedDrivers() {
     const driverRepository = this.dataSource.getRepository(DriverORM);
+    const vehicleRepository = this.dataSource.getRepository(VehicleORM);
 
     const existingDriversCount = await driverRepository.count();
     if (existingDriversCount >= 3) {
@@ -27,6 +31,7 @@ export class DriverSeedService {
         description:
           'Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).',
         vehicle: {
+          id: "1",
           model: 'Plymouth Valiant 1973 rosa e enferrujado',
           description: 'Carro antigo e peculiar de Homer',
         },
@@ -44,6 +49,7 @@ export class DriverSeedService {
         description:
           'Ei, aqui é o Dom. Pode entrar, vou te levar com segurança e rapidez ao seu destino. Só não mexa no rádio, a playlist é sagrada.',
         vehicle: {
+          id: "2",
           model: 'Dodge Charger R/T 1970 modificado',
           description: 'Carro potente e modificado para corridas.',
         },
@@ -61,6 +67,7 @@ export class DriverSeedService {
         description:
           'Boa noite, sou James Bond. À seu dispor para um passeio suave e discreto. Aperte o cinto e aproveite a viagem.',
         vehicle: {
+          id: "3",
           model: 'Aston Martin DB5 clássico',
           description: 'Carro clássico e elegante com recursos secretos.',
         },
@@ -79,25 +86,47 @@ export class DriverSeedService {
     await queryRunner.startTransaction();
 
     try {
-      for (const driverData of driversData) {
-        const driver = new DriverORM();
-        driver.id = driverData.id;
-        driver.name = driverData.name;
-        driver.description = driverData.description;
-        driver.ratePerKm = driverData.ratePerKm;
-        driver.minimumDistance = driverData.minimumDistance;
-        const vehicle = new VehicleORM();
-        vehicle.model = driverData.vehicle.model;
-        vehicle.description = driverData.vehicle.description;
-        vehicle.driver = driver;
-        const review = new ReviewORM();
-        review.rating = driverData.review.rating;
-        review.comment = driverData.review.comment;
-        review.driver = driver;
-        driver.vehicle = vehicle;
-        driver.reviews = [review];
-        await queryRunner.manager.save(driver);
+      const vehiclesData = driversData.map(driverData => ({
+        id: driverData.vehicle.id,
+        model: driverData.vehicle.model,
+        description: driverData.vehicle.description
+      }));
+
+      for (const vehicleData of vehiclesData) {
+        const vehicleOrm = new VehicleORM();
+        vehicleOrm.id = vehicleData.id;
+        vehicleOrm.model = vehicleData.model;
+        vehicleOrm.description = vehicleData.description;
+
+        await vehicleRepository.save(vehicleOrm);
       }
+      for (const driverData of driversData) {
+        const vehicle = new Vehicle({
+          id: driverData.vehicle.id,
+          model: driverData.vehicle.model,
+          description: driverData.vehicle.description,
+        });
+
+        const review = new Review({
+          rating: driverData.review.rating,
+          comment: driverData.review.comment,
+        });
+
+        const driverDomain = new Driver({
+          id: driverData.id,
+          name: driverData.name,
+          description: driverData.description,
+          vehicle: vehicle,
+          review: review,
+          ratePerKm: driverData.ratePerKm,
+          minimumDistance: driverData.minimumDistance,
+        });
+
+        const driverOrm = DriverMapper.toOrm(driverDomain);
+
+        await driverRepository.save(driverOrm);
+      }
+
       await queryRunner.commitTransaction();
       console.log('Drivers seed executado com sucesso!');
     } catch (error) {

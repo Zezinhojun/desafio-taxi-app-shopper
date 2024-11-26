@@ -3,7 +3,7 @@ import { RideORM } from './Ride';
 
 @Entity('customers')
 export class CustomerORM {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @OneToMany(() => RideORM, (ride) => ride.customer)

@@ -1,28 +1,20 @@
 import { DriverORM } from '@data/datasources/entities/Driver';
 import { Driver } from '@domain/entities/Driver';
 import { ReviewMapper } from './ReviewMapper';
-import { ReviewORM } from '@data/datasources/entities/Review';
 import { Review } from '@domain/entities/Review';
 import { VehicleMapper } from './VehicleMapper';
+import { VehicleORM } from '@data/datasources/entities/Vehicle';
+import { ReviewORM } from '@data/datasources/entities/Review';
 
 export class DriverMapper {
   static toDomain(ormEntity: DriverORM): Driver {
-    console.log(
-      'DriverMapper - Mapeando driver:',
-      JSON.stringify(ormEntity, null, 2),
-    );
-
-    // Log detalhado de cada propriedade
-    console.log('Vehicle:', ormEntity.vehicle);
-    console.log('Reviews:', ormEntity.reviews);
-
     const review =
       ormEntity.reviews.length > 0
         ? ReviewMapper.toDomain(ormEntity.reviews[0])
         : new Review({
-            rating: 5,
-            comment: 'Very Good',
-          });
+          rating: 5,
+          comment: 'Very Good',
+        });
 
     if (!ormEntity.vehicle) {
       throw new Error('DriverORM must have a Vehicle associated.');
@@ -46,14 +38,16 @@ export class DriverMapper {
     ormEntity.id = domainEntity.id;
     ormEntity.name = domainEntity.name;
     ormEntity.description = domainEntity.description;
+    ormEntity.reviews = ormEntity.reviews || [];
+
     if (domainEntity.vehicle) {
-      ormEntity.vehicle = {
-        id: domainEntity.vehicle.id,
-        model: domainEntity.vehicle.model,
-        description: domainEntity.vehicle.description,
-        driver: ormEntity,
-      };
+      const vehicle = new VehicleORM();
+      vehicle.id = domainEntity.vehicle.id;
+      vehicle.model = domainEntity.vehicle.model;
+      vehicle.description = domainEntity.vehicle.description;
+      ormEntity.vehicle = vehicle;
     }
+
     if (domainEntity.review) {
       if (ormEntity.reviews.length > 0) {
         const review = ormEntity.reviews[0];
@@ -66,6 +60,8 @@ export class DriverMapper {
         ormEntity.reviews.push(newReview);
       }
     }
+
+
     ormEntity.ratePerKm = domainEntity.ratePerKm;
     ormEntity.minimumDistance = domainEntity.minimumDistance;
     return ormEntity;

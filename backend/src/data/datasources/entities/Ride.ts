@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -15,29 +16,31 @@ export class RideORM {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => CustomerORM, (customer) => customer.rides)
+  @ManyToOne(() => CustomerORM)
+  @JoinColumn({ name: 'customerId' })
   customer: CustomerORM;
 
-  @ManyToOne(() => DriverORM, (driver) => driver.rides)
+  @ManyToOne(() => DriverORM)
+  @JoinColumn({ name: 'driverId' })
   driver: DriverORM;
 
   @OneToOne(() => LocationORM)
-  @JoinColumn()
+  @JoinColumn({ name: "originId" })
   origin: LocationORM;
 
   @OneToOne(() => LocationORM)
-  @JoinColumn()
+  @JoinColumn({ name: "destinationId" })
   destination: LocationORM;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('float')
   distance: number;
 
   @Column('varchar')
   duration: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('float')
   value: number;
 
-  @Column('datetime')
-  date: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 }

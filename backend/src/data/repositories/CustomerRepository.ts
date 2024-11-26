@@ -11,17 +11,26 @@ export class CustomerRepository implements ICustomerRepository {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   private get customerRepository(): Repository<CustomerORM> {
     return this.dataSource.getRepository(CustomerORM);
   }
 
-  async findById(id: string): Promise<Customer | null> {
+  async findById(customerId: string): Promise<Customer | null> {
+    console.log(`Searching for customer with ID: ${customerId}`);
+
     const customerOrm = await this.customerRepository.findOne({
-      where: { id },
-      relations: ['rides'],
+      where: { id: customerId }
     });
-    return customerOrm ? CustomerMapper.toDomain(customerOrm) : null;
+
+    if (!customerOrm) {
+      console.log(`Customer with ID ${customerId} not found.`);
+      return null;
+    }
+
+    console.log('Customer found:', customerOrm);
+
+    return CustomerMapper.toDomain(customerOrm);
   }
 }
