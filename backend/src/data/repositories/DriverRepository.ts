@@ -1,22 +1,26 @@
-import { InjectRepository } from 'inversify-typeorm';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { DriverORM } from '@data/datasources/entities/Driver';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 import { Driver } from '@domain/entities/Driver';
 import { DriverMapper } from '@data/mappers/DriverMapper';
+import { TYPES } from '@shared/di/Types';
 
 @injectable()
 export class DriverRepository implements IDriverRepository {
   constructor(
-    @InjectRepository(DriverORM)
-    private readonly driverRepository: Repository<DriverORM>,
-  ) {}
+    @inject(TYPES.DataSource)
+    private readonly dataSource: DataSource
+  ) { }
+
+  private get driverRepository(): Repository<DriverORM> {
+    return this.dataSource.getRepository(DriverORM);
+  }
 
   async findById(id: number): Promise<Driver | null> {
     const driverOrm = await this.driverRepository.findOne({
       where: { id },
-      relations: ['vehicle', 'review'],
+      relations: ['vehicle', 'reviews'],
     });
     return driverOrm ? DriverMapper.toDomain(driverOrm) : null;
   }
@@ -24,7 +28,7 @@ export class DriverRepository implements IDriverRepository {
   async findEligibleDrivers(distance: number): Promise<Driver[]> {
     const driversOrm = await this.driverRepository.find({
       where: { minimumDistance: distance },
-      relations: ['vehicle', 'review'],
+      relations: ['vehicle', 'reviews'],
     });
     return driversOrm.map(DriverMapper.toDomain);
   }

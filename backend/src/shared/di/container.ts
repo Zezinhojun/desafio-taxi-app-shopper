@@ -14,7 +14,8 @@ import { RideController } from '@presentation/controllers/RideController';
 import { RideRoutes } from '@presentation/routes/rideRoutes';
 import { AppDataSource } from '@data/datasources/DatabaseDataSource';
 import { DataSource } from 'typeorm';
-import { DriverORM } from '@data/datasources/entities/Driver';
+import { DriverRepository } from '@data/repositories/DriverRepository';
+import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 
 const container = new Container();
 
@@ -31,21 +32,14 @@ async function initializeDataSource() {
 async function initializeContainer() {
   await initializeDataSource();
 
-  // Vincule o AppDataSource ao contêiner
   container.bind<DataSource>(TYPES.DataSource).toConstantValue(AppDataSource);
+  container.bind<IDriverRepository>(TYPES.DriverRepository).to(DriverRepository)
 
-  // Registre os repositórios ORM gerenciados pelo TypeORM
-  container
-    .bind(TYPES.DriverRepository)
-    .toConstantValue(AppDataSource.getRepository(DriverORM));
-
-  // Registre os repositórios personalizados
   container.bind<IRideRepository>(TYPES.RideRepository).to(RideRepository);
   container
     .bind<ICustomerRepository>(TYPES.CustomerRepository)
     .to(CustomerRepository);
 
-  // Outros bindings
   container
     .bind<GoogleMapsDataSource>(TYPES.GoogleMapsDataSource)
     .to(GoogleMapsDataSource);
