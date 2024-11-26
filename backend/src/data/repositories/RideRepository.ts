@@ -23,7 +23,7 @@ export class RideRepository implements IRideRepository {
     return RideMapper.toDomain(savedRide);
   }
 
-  async findByCustomerId(customerId: string): Promise<Ride[] | null> {
+  async findByCustomerId(customerId: string): Promise<Ride[]> {
     const ridesOrm = await this.rideRepository.find({
       where: { customer: { id: customerId } },
       relations: [
@@ -35,9 +35,9 @@ export class RideRepository implements IRideRepository {
         'destination',
       ],
     });
-    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : null;
+    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : [];
   }
-  async findByDriverId(driverId: number): Promise<Ride[] | null> {
+  async findByDriverId(driverId: number): Promise<Ride[]> {
     const ridesOrm = await this.rideRepository.find({
       where: { driver: { id: driverId } },
       relations: [
@@ -49,13 +49,13 @@ export class RideRepository implements IRideRepository {
         'destination',
       ],
     });
-    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : null;
+    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : [];
   }
 
   async findByCustomerAndDriver(
     customerId: string,
     driverId: number,
-  ): Promise<Ride[] | null> {
+  ): Promise<Ride[]> {
     const ridesOrm = await this.rideRepository.find({
       where: {
         customer: { id: customerId },
@@ -70,6 +70,6 @@ export class RideRepository implements IRideRepository {
         'destination',
       ],
     });
-    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : null;
+    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : [];
   }
 }

@@ -46,7 +46,7 @@ export class GetRideHistoryUseCase {
       return filteredRides;
     }
 
-    rides.sort((a, b) => b.date.getTime() - a.date.getTime());
+    rides?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
     return rides;
   }

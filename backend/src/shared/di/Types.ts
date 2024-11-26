@@ -10,4 +10,5 @@ export const TYPES = {
   GetRideHistoryUseCase: Symbol.for('GetRideHistoryUseCase'),
   ConfirmRideUseCase: Symbol.for('ConfirmRideUseCase'),
   DataSource: Symbol('DataSource'),
+  DriverSeedService: Symbol.for('DriverSeedService'),
 };

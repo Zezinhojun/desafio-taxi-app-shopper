@@ -16,10 +16,13 @@ import { AppDataSource } from '@data/datasources/DatabaseDataSource';
 import { DataSource } from 'typeorm';
 import { DriverRepository } from '@data/repositories/DriverRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
+import { DriverSeedService } from 'seeds/driver.seed';
+import mysql from 'mysql2/promise';
 
 const container = new Container();
 
 async function initializeDataSource() {
+  await createDatabaseIfNotExist();
   try {
     await AppDataSource.initialize();
     console.log('Data Source has been initialized successfully!');
@@ -29,9 +32,27 @@ async function initializeDataSource() {
   }
 }
 
+async function createDatabaseIfNotExist() {
+  const databaseName = process.env.DB_NAME ?? 'taxi_app';
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST ?? 'localhost',
+    user: process.env.DB_USER ?? 'root',
+    password: process.env.DB_PASSWORD ?? '',
+  });
+
+  try {
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${databaseName}\``);
+    console.log(`Database '${databaseName}' checked/created.`);
+  } catch (error) {
+    console.error('Error creating database:', error);
+    throw error;
+  } finally {
+    await connection.end();
+  }
+}
+
 async function initializeContainer() {
   await initializeDataSource();
-
   container.bind<DataSource>(TYPES.DataSource).toConstantValue(AppDataSource);
   container
     .bind<IDriverRepository>(TYPES.DriverRepository)
@@ -41,7 +62,6 @@ async function initializeContainer() {
   container
     .bind<ICustomerRepository>(TYPES.CustomerRepository)
     .to(CustomerRepository);
-
   container
     .bind<GoogleMapsDataSource>(TYPES.GoogleMapsDataSource)
     .to(GoogleMapsDataSource);
@@ -57,6 +77,13 @@ async function initializeContainer() {
   container.bind<RideService>(TYPES.RideService).to(RideService);
   container.bind<IRideController>(TYPES.RideController).to(RideController);
   container.bind<RideRoutes>(TYPES.RideRoutes).to(RideRoutes);
+  container
+    .bind<DriverSeedService>(TYPES.DriverSeedService)
+    .to(DriverSeedService);
+  const driverSeedService = container.get<DriverSeedService>(
+    TYPES.DriverSeedService,
+  );
+  await driverSeedService.seedDrivers();
 }
 
 export { container, initializeContainer };
