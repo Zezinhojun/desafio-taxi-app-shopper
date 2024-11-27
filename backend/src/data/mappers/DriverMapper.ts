@@ -6,6 +6,9 @@ import { VehicleORM } from '@data/datasources/entities/Vehicle';
 
 export class DriverMapper {
   static toDomain(ormEntity: DriverORM): Driver {
+    if (!ormEntity) {
+      throw new Error('Invalid DriverORM object.');
+    }
     if (!ormEntity.vehicle) {
       throw new Error('DriverORM must have a Vehicle associated.');
     }

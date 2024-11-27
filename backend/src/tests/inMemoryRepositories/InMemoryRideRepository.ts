@@ -2,7 +2,6 @@ import { Ride } from '@domain/entities/Ride';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
 
 export class InMemoryRideRepository implements IRideRepository {
-
   async save(ride: Ride): Promise<Ride> {
     this.rides.push(ride);
     return ride;

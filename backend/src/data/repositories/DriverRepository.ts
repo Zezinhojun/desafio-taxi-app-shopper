@@ -11,7 +11,7 @@ export class DriverRepository implements IDriverRepository {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) { }
+  ) {}
 
   private get driverRepository(): Repository<DriverORM> {
     return this.dataSource.getRepository(DriverORM);

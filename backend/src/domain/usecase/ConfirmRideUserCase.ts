@@ -16,7 +16,7 @@ export class ConfirmRideUseCase {
     private readonly driverRepository: IDriverRepository,
     @inject(TYPES.GoogleMapsDataSource)
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) { }
+  ) {}
 
   async execute({ customerId, rideDetails }: ConfirmRideParams): Promise<Ride> {
     if (

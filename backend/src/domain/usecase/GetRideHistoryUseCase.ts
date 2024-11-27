@@ -2,14 +2,11 @@ import { Driver } from '@domain/entities/Driver';
 import { Ride } from '@domain/entities/Ride';
 import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
-import { IRideRepository } from '@domain/interfaces/IRideRepository';
 import { TYPES } from '@shared/di/Types';
 import { inject } from 'inversify';
 
 export class GetRideHistoryUseCase {
   constructor(
-    @inject(TYPES.RideRepository)
-    private readonly rideRepository: IRideRepository,
     @inject(TYPES.CustomerRepository)
     private readonly customerRepository: ICustomerRepository,
     @inject(TYPES.DriverRepository)
@@ -22,7 +19,6 @@ export class GetRideHistoryUseCase {
     let driver: Driver | null = null;
     if (driverId !== undefined) {
       driver = await this.driverRepository.findById(driverId);
-
       if (!driver) {
         throw new Error('Driver not found');
       }

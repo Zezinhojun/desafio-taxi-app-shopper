@@ -83,10 +83,9 @@ export const setupTest = <T>(
     const confirmRideUseCase = new ConfirmRideUseCase(
       rideRepository,
       driverRepository,
-      googleMapsDataSource
+      googleMapsDataSource,
     );
     const getRideHistoryUseCase = new GetRideHistoryUseCase(
-      rideRepository,
       customerRepository,
       driverRepository,
     );
@@ -145,13 +144,13 @@ export const mockConfirmRideUseCaseFactory = (): ConfirmRideUseCase => {
   return new ConfirmRideUseCase(
     new InMemoryRideRepository(),
     new InMemoryDriverRepository(),
-    new GoogleMapsDataSource()
+    new GoogleMapsDataSource(),
   );
 };
 
 export const mockGetRideHistoryUseCaseFactory = (): GetRideHistoryUseCase => {
   return new GetRideHistoryUseCase(
-    new InMemoryRideRepository(),
+
     new InMemoryCustomerRepository(),
     new InMemoryDriverRepository(),
   );
