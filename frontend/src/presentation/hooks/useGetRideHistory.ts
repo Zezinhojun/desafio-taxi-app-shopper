@@ -16,7 +16,7 @@ export function useGetRideHistory(customerId: string, driverId?: number): useGet
                 const apiDataSource = new ApiDataSource();
                 const useCase = new GetRideHistoryUseCase(apiDataSource)
                 const rideHistory = await useCase.execute(customerId, driverId);
-                setRides(rideHistory)
+                setRides(rideHistory.rides)
                 setIsLoading(false);
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
@@ -24,7 +24,9 @@ export function useGetRideHistory(customerId: string, driverId?: number): useGet
                 setError("Unable to getHistory the ride. Please try again.");
             }
         }
-        fetchRides();
+        if (customerId) {
+            fetchRides();
+        }
     }, [customerId, driverId])
 
     return { rides, error, isLoading };

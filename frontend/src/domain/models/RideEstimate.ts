@@ -1,12 +1,12 @@
-import { Driver, DriverParams } from "./Driver";
-import { Location, LocationParams } from "./Location";
+import { Driver } from "./Driver";
+import { Location } from "./Location";
 
 export interface RideEstimateParams {
-    origin: LocationParams;
-    destination: LocationParams;
+    origin: Location;
+    destination: Location;
     distance: number;
     duration: string;
-    options: DriverParams[];
+    options: Driver[];
     routeResponse: object;
 }
 
@@ -26,11 +26,11 @@ export class RideEstimate {
         options: availableDrivers,
         routeResponse,
     }: RideEstimateParams) {
-        this._origin = new Location(origin);
-        this._destination = new Location(destination);
+        this._origin = origin;
+        this._destination = destination;
         this._distance = distance;
         this._duration = duration;
-        this._options = availableDrivers.map(driver => new Driver(driver))
+        this._options = availableDrivers
         this._routeResponse = routeResponse;
     }
 
@@ -56,18 +56,6 @@ export class RideEstimate {
 
     get availableDrivers(): Driver[] {
         return this._options;
-    }
-
-
-    toPayload(): RideEstimateParams {
-        return {
-            origin: this._origin.toPayload(),
-            destination: this._destination.toPayload(),
-            distance: this._distance,
-            duration: this._duration,
-            options: this.availableDrivers.map(driver => driver.toPayload()),
-            routeResponse: this._routeResponse,
-        }
     }
 
 }

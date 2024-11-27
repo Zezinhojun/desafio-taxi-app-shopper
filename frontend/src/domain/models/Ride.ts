@@ -1,15 +1,14 @@
-import { Driver, DriverParams } from "./Driver";
-import { Location, LocationParams } from "./Location";
-
+import { Driver } from "./Driver";
+import { Location } from "./Location";
 
 export interface RideParams {
     id?: number;
     customerId: string;
-    origin: LocationParams;
-    destination: LocationParams;
+    origin: Location;
+    destination: Location;
     distance: number;
     duration: string;
-    driver: DriverParams;
+    driver: Driver;
     value: number;
     date: Date;
 }
@@ -40,11 +39,11 @@ export class Ride {
             this._id = id;
         }
         this._customerId = customerId;
-        this._origin = new Location(origin);
-        this._destination = new Location(destination);
+        this._origin = origin;
+        this._destination = destination;
         this._distance = distance;
         this._duration = duration;
-        this._driver = new Driver(driver)
+        this._driver = driver
         this._value = value;
         this._date = date;
     }
@@ -87,20 +86,6 @@ export class Ride {
 
     estimateRide(): number {
         return this._driver.calculateRideValue(this._distance);
-    }
-
-    toPayload(): RideParams {
-        return {
-            id: this._id ?? undefined,
-            customerId: this._customerId,
-            date: this._date,
-            distance: this._distance,
-            destination: this._destination.toPayload(),
-            origin: this._origin.toPayload(),
-            driver: this._driver.toPayload(),
-            duration: this._duration,
-            value: this._value,
-        }
     }
 
 }

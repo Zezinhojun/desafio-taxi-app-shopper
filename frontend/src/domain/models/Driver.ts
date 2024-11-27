@@ -1,14 +1,14 @@
-import { Review, ReviewParams } from "./Review";
-import { Vehicle, VehicleParams } from "./Vehicle";
+import { Review } from "./Review";
+import { Vehicle } from "./Vehicle";
 
 export interface DriverParams {
     id: number;
     name: string;
     description: string;
-    vehicle: VehicleParams;
+    vehicle: Vehicle;
     ratePerKm: number;
     minimumDistance: number;
-    reviews: ReviewParams[];
+    reviews: Review[];
 }
 
 export class Driver {
@@ -32,10 +32,10 @@ export class Driver {
         this._id = id;
         this._name = name;
         this._description = description;
-        this._vehicle = new Vehicle(vehicle);
+        this._vehicle = vehicle;
         this._ratePerKm = ratePerKm;
         this._minimumDistance = minimumDistance;
-        this._reviews = reviews.map(rev => new Review(rev));
+        this._reviews = reviews
     }
 
     get id(): number {
@@ -68,18 +68,6 @@ export class Driver {
 
     calculateRideValue(distance: number): number {
         return distance * this._ratePerKm;
-    }
-
-    toPayload(): DriverParams {
-        return {
-            id: this._id,
-            name: this._name,
-            description: this._description,
-            vehicle: this._vehicle.toPayload(),
-            ratePerKm: this._ratePerKm,
-            minimumDistance: this._minimumDistance,
-            reviews: this._reviews.map(rev => rev.toPayload()),
-        };
     }
 
 }

@@ -1,5 +1,6 @@
 import { Ride } from '@/domain/models/Ride';
 import { RideEstimate } from '@/domain/models/RideEstimate';
+import { RideResponseParams } from '@/domain/models/RideResponse';
 import axios from 'axios'
 
 export interface ConfirmRideParams {
@@ -8,12 +9,12 @@ export interface ConfirmRideParams {
 }
 
 export class ApiDataSource {
-    async getRideHistory(customerId: string, driverId?: number): Promise<Ride[]> {
-        const response = await axios.get('/rides/history', {
-            params: { customerId, driverId }
+    async getRideHistory(customerId: string, driverId?: number): Promise<RideResponseParams> {
+        const response = await axios.get(`http://localhost:8080/rides/history/${customerId}`, {
+            params: { driverId },
         });
 
-        return response.data
+        return response.data;
     }
 
     async estimateRide(customerId: string, origin: string, destination: string): Promise<RideEstimate> {
