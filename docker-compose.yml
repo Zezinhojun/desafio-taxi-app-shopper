@@ -36,6 +36,20 @@ services:
       networks:
         - taxi-network
 
+    frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      container_name: frontend-taxi-app
+      ports:
+        - "80:80"
+      environment:
+        - NEXT_PUBLIC_API_URL=http://backend:8080
+      networks:
+        - taxi-network
+      depends_on:
+        - backend
+
 networks:
   taxi-network:
     driver: bridge
