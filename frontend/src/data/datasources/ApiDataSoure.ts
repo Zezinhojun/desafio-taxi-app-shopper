@@ -2,6 +2,11 @@ import { Ride } from '@/domain/models/Ride';
 import { RideEstimate } from '@/domain/models/RideEstimate';
 import axios from 'axios'
 
+export interface ConfirmRideParams {
+    customerId: string;
+    rideDetails: Ride;
+}
+
 export class ApiDataSource {
     async getRideHistory(customerId: string, driverId?: number): Promise<Ride[]> {
         const response = await axios.get('/rides/history', {
