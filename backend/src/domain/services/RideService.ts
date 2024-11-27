@@ -27,7 +27,7 @@ export class RideService {
     private readonly estimateRideUseCase: EstimateRideUseCase,
     @inject(TYPES.GetRideHistoryUseCase)
     private readonly getRideHistoryUseCase: GetRideHistoryUseCase,
-  ) {}
+  ) { }
 
   private mapToRideEstimateDTO(estimate: RideEstimate): RideEstimateDTO {
     const availableDrivers = estimate.listAvailableDrivers();

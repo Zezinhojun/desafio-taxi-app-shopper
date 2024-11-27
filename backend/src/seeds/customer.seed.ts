@@ -8,7 +8,7 @@ export class CustomerSeedService {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async seedCustomer() {
     const customerRepository = this.dataSource.getRepository(CustomerORM);
@@ -54,7 +54,7 @@ export class CustomerSeedService {
         await queryRunner.manager.save(customer);
       }
       await queryRunner.commitTransaction();
-      console.log('Drivers seed executado com sucesso!');
+      console.log('Customer seed executado com sucesso!');
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error('Erro ao executar seed de drivers:', error);

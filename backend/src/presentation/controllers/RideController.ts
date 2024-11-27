@@ -10,7 +10,7 @@ export class RideController implements IRideController {
   constructor(
     @inject(TYPES.RideService)
     private readonly rideService: RideService,
-  ) {}
+  ) { }
 
   estimateRide: RequestHandler = async (req, res, next) => {
     const { customer_id, origin, destination } = req.body;
@@ -35,23 +35,21 @@ export class RideController implements IRideController {
       destination,
       driver,
       value,
-      distance,
-      duration,
     } = req.body;
-    const ride = new Ride({
+
+    const ride = {
       customerId: customer_id,
       origin,
       destination,
-      distance,
-      duration,
       driver,
       value,
       date: new Date(),
-    });
+    };
+
     try {
       await this.rideService.confirmRide({
         customerId: customer_id,
-        rideDetails: ride,
+        rideDetails: ride as Ride,
       });
 
       res.status(200).json({ success: true });

@@ -11,7 +11,7 @@ export class DriverRepository implements IDriverRepository {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   private get driverRepository(): Repository<DriverORM> {
     return this.dataSource.getRepository(DriverORM);
@@ -25,7 +25,7 @@ export class DriverRepository implements IDriverRepository {
       });
 
       if (!driverOrm) {
-        return null;
+        throw new Error("Driver not found");
       }
 
       const DriverMapperReturn = DriverMapper.toDomain(driverOrm);
@@ -43,9 +43,13 @@ export class DriverRepository implements IDriverRepository {
 
   async findEligibleDrivers(distance: number): Promise<Driver[]> {
     const driversOrm = await this.driverRepository.find({
-      where: { minimumDistance: distance },
       relations: ['vehicle', 'reviews'],
     });
-    return driversOrm.map(DriverMapper.toDomain);
+
+    const eligibleDrivers = driversOrm
+      .map(DriverMapper.toDomain)
+      .filter(driver => driver.isEligibleForDistance(distance))
+
+    return eligibleDrivers
   }
 }

@@ -16,7 +16,7 @@ export class ConfirmRideUseCase {
     private readonly driverRepository: IDriverRepository,
     @inject(TYPES.GoogleMapsDataSource)
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) {}
+  ) { }
 
   async execute({ customerId, rideDetails }: ConfirmRideParams): Promise<Ride> {
     if (
@@ -43,9 +43,15 @@ export class ConfirmRideUseCase {
     const destinationLocation =
       await this.googleMapsDataSource.geocodeAddress(destinationAddress);
 
+    const responseGoogle = await this.googleMapsDataSource.calculateRoute(originLocation, destinationLocation)
+
     const driver = await this.driverRepository.findById(rideDetails.driver.id);
 
-    if (!driver?.isEligibleForDistance(rideDetails.distance)) {
+    if (!driver) {
+      throw new Error('Driver not found')
+    }
+
+    if (!driver?.isEligibleForDistance(responseGoogle.distance)) {
       throw new Error('Invalid distance for this driver');
     }
 
@@ -62,8 +68,8 @@ export class ConfirmRideUseCase {
         latitude: destinationLocation.latitude,
         longitude: destinationLocation.longitude,
       }),
-      distance: rideDetails.distance,
-      duration: rideDetails.duration,
+      distance: responseGoogle.distance,
+      duration: responseGoogle.duration,
       driver: rideDetails.driver,
       value: rideDetails.value,
       date: rideDetails.date,

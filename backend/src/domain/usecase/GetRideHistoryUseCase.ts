@@ -11,14 +11,20 @@ export class GetRideHistoryUseCase {
     private readonly customerRepository: ICustomerRepository,
     @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
-  ) {}
+  ) { }
 
   async execute(customerId: string, driverId?: number): Promise<Ride[]> {
     const customer = await this.customerRepository.findById(customerId);
 
     let driver: Driver | null = null;
+
+    console.log(driverId)
+
     if (driverId !== undefined) {
+
+      console.log(driverId)
       driver = await this.driverRepository.findById(driverId);
+      console.log(driver)
       if (!driver) {
         throw new Error('Driver not found');
       }

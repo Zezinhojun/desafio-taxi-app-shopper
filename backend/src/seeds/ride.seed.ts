@@ -11,7 +11,7 @@ export class RideSeedService {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async seedRides() {
     const rideRepository = this.dataSource.getRepository(RideORM);
@@ -60,7 +60,7 @@ export class RideSeedService {
         {
           id: 1,
           distance: 10.5,
-          duration: '00:45:00',
+          duration: '1500s',
           value: 25.0,
           customer: customers[0],
           driver: drivers[0],
@@ -75,7 +75,7 @@ export class RideSeedService {
         {
           id: 2,
           distance: 15.3,
-          duration: '01:00:00',
+          duration: '340s',
           value: 40.0,
           customer: customers[1],
           driver: drivers[1],
@@ -109,6 +109,7 @@ export class RideSeedService {
         }
 
         await queryRunner.commitTransaction();
+        console.log('Ride seed executado com sucesso!');
       } catch (error) {
         await queryRunner.rollbackTransaction();
         console.error('Erro ao executar seed de rides:', error);

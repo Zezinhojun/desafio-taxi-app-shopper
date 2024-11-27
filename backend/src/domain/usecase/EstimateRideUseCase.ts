@@ -20,7 +20,7 @@ export class EstimateRideUseCase {
     private readonly driverRepository: IDriverRepository,
     @inject(TYPES.GoogleMapsDataSource)
     private readonly googleMapsDataSource: GoogleMapsDataSource,
-  ) {}
+  ) { }
 
   async execute({
     customerId,
@@ -37,17 +37,17 @@ export class EstimateRideUseCase {
     const destinationLocation =
       await this.googleMapsDataSource.geocodeAddress(destination);
 
-    const routeDetails = await this.googleMapsDataSource.calculateRoute(
+    const responseGoogle = await this.googleMapsDataSource.calculateRoute(
       originLocation,
       destinationLocation,
     );
 
-    if (!routeDetails?.distance) {
+    if (!responseGoogle?.distance) {
       throw new Error('Unable to calculate route details');
     }
 
     const availableDrivers = await this.driverRepository.findEligibleDrivers(
-      routeDetails.distance,
+      responseGoogle.distance,
     );
 
     const mappedDrivers = availableDrivers.map((driver) => {
@@ -65,10 +65,10 @@ export class EstimateRideUseCase {
     const rideEstimateParams: RideEstimateParams = {
       origin: originLocation,
       destination: destinationLocation,
-      distance: routeDetails.distance,
-      duration: routeDetails.duration,
+      distance: responseGoogle.distance,
+      duration: responseGoogle.duration,
       options: mappedDrivers,
-      routeResponse: routeDetails.originalResponse,
+      routeResponse: responseGoogle.originalResponse,
     };
 
     return new RideEstimate(rideEstimateParams);

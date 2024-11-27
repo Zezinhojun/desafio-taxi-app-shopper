@@ -15,7 +15,7 @@ export class RideRepository implements IRideRepository {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   private get rideRepository(): Repository<RideORM> {
     return this.dataSource.getRepository(RideORM);
