@@ -2,9 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('locations')
 export class LocationORM {
-
   @PrimaryGeneratedColumn('uuid')
-  id: number
+  id: number;
 
   @Column('varchar')
   address: string;

@@ -25,11 +25,11 @@ export class RideORM {
   driver: DriverORM;
 
   @OneToOne(() => LocationORM)
-  @JoinColumn({ name: "originId" })
+  @JoinColumn({ name: 'originId' })
   origin: LocationORM;
 
   @OneToOne(() => LocationORM)
-  @JoinColumn({ name: "destinationId" })
+  @JoinColumn({ name: 'destinationId' })
   destination: LocationORM;
 
   @Column('float')

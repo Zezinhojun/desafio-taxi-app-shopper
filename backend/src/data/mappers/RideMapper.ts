@@ -8,14 +8,14 @@ export class RideMapper {
   static toDomain(ormEntity: RideORM): Ride {
     return new Ride({
       id: ormEntity.id,
-      customerId: ormEntity.customer.id,
+      customerId: ormEntity.customer.id ?? '1',
       driver: DriverMapper.toDomain(ormEntity.driver),
       origin: LocationMapper.toDomain(ormEntity.origin),
       destination: LocationMapper.toDomain(ormEntity.destination),
       distance: ormEntity.distance,
       duration: ormEntity.duration,
       value: ormEntity.value,
-      date: ormEntity.createdAt
+      date: ormEntity.createdAt,
     });
   }
 

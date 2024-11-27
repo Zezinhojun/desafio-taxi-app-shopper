@@ -82,8 +82,8 @@ export const setupTest = <T>(
     );
     const confirmRideUseCase = new ConfirmRideUseCase(
       rideRepository,
-      customerRepository,
       driverRepository,
+      googleMapsDataSource
     );
     const getRideHistoryUseCase = new GetRideHistoryUseCase(
       rideRepository,
@@ -104,8 +104,8 @@ export const setupTest = <T>(
     sut = new UseCaseClass(
       new ConfirmRideUseCase(
         rideRepository,
-        customerRepository,
         driverRepository,
+        googleMapsDataSource,
       ),
     );
   } else {
@@ -144,8 +144,8 @@ export const mockEstimateRideUseCaseFactory = (): EstimateRideUseCase => {
 export const mockConfirmRideUseCaseFactory = (): ConfirmRideUseCase => {
   return new ConfirmRideUseCase(
     new InMemoryRideRepository(),
-    new InMemoryCustomerRepository(),
     new InMemoryDriverRepository(),
+    new GoogleMapsDataSource()
   );
 };
 

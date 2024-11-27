@@ -4,9 +4,15 @@ import { RideMapper } from './RideMapper';
 
 export class CustomerMapper {
   static toDomain(ormEntity: CustomerORM): Customer {
+    const rideHistory = ormEntity.rides
+      ? ormEntity.rides.map((ride) => {
+          return RideMapper.toDomain(ride);
+        })
+      : [];
+
     return new Customer({
       id: ormEntity.id,
-      rideHistory: ormEntity.rides ? ormEntity.rides.map((ride) => RideMapper.toDomain(ride)) : [],
+      rideHistory: rideHistory,
     });
   }
 

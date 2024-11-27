@@ -58,7 +58,7 @@ export class EstimateRideUseCase {
         vehicle: driver.vehicle,
         ratePerKm: driver.ratePerKm,
         minimumDistance: driver.minimumDistance,
-        review: driver.review,
+        reviews: driver.review,
       });
     });
 

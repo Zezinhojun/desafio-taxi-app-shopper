@@ -6,7 +6,7 @@ describe('ConfirmRideUseCase', () => {
   let testSetup: TestSetup<ConfirmRideUseCase>;
 
   beforeEach(() => {
-    testSetup = setupTest(ConfirmRideUseCase);
+    testSetup = setupTest(ConfirmRideUseCase, true);
   });
 
   it('should successfully confirm a ride', async () => {
@@ -21,7 +21,7 @@ describe('ConfirmRideUseCase', () => {
 
     jest.spyOn(customerRepository, 'findById');
     jest.spyOn(driverRepository, 'findById');
-    jest.spyOn(rideRepository, 'create');
+    jest.spyOn(rideRepository, 'save');
 
     const params = {
       customerId: mockCustomer.id,
@@ -32,7 +32,7 @@ describe('ConfirmRideUseCase', () => {
 
     expect(customerRepository.findById).toHaveBeenCalledWith(mockCustomer.id);
     expect(driverRepository.findById).toHaveBeenCalledWith(mockRide.driver.id);
-    expect(rideRepository.create).toHaveBeenCalledWith(mockRide);
+    expect(rideRepository.save).toHaveBeenCalledWith(mockRide);
     expect(result).toEqual(mockRide);
     expect(result).toBeInstanceOf(Ride);
   });

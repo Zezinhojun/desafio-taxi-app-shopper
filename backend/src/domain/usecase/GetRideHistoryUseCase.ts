@@ -17,28 +17,18 @@ export class GetRideHistoryUseCase {
   ) { }
 
   async execute(customerId: string, driverId?: number): Promise<Ride[]> {
-    console.log('GetRideHistoryUseCase - Inputs:', { customerId, driverId });
-
     const customer = await this.customerRepository.findById(customerId);
-
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
-
 
     let driver: Driver | null = null;
     if (driverId !== undefined) {
       driver = await this.driverRepository.findById(driverId);
-      console.log('Driver found:', driver ? 'Yes' : 'No');
 
       if (!driver) {
         throw new Error('Driver not found');
       }
     }
 
-
-    const rides = await this.rideRepository.findByCustomerId(customerId);
-    console.log('Total rides found:', rides.length);
+    const rides: Ride[] = customer?.rideHistory ?? [];
 
     if (rides.length === 0) {
       throw new Error('No rides found');
@@ -46,7 +36,6 @@ export class GetRideHistoryUseCase {
 
     if (driverId) {
       const filteredRides = rides.filter((ride) => ride.driver.id === driverId);
-      console.log('Filtered rides count:', filteredRides.length);
 
       if (filteredRides.length === 0) {
         throw new Error('No rides found for this driver');

@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-
-  PrimaryGeneratedColumn,
-} from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('vehicles')
 export class VehicleORM {

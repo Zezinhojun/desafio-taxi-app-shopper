@@ -10,7 +10,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Função para tentar conectar ao banco de dados com retries
 initializeContainer()
   .then(() => {
     const rideRoutes = container.get<RideRoutes>(TYPES.RideRoutes);
@@ -18,7 +17,6 @@ initializeContainer()
 
     app.use(ErrorHandler.handleErrors);
 
-    // Inicializa o servidor
     const PORT = process.env.PORT ?? 8080;
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
@@ -26,5 +24,5 @@ initializeContainer()
   })
   .catch((err) => {
     console.error('Error during application startup:', err);
-    process.exit(1); // Finaliza o processo se a inicialização falhar
+    process.exit(1);
   });

@@ -23,10 +23,9 @@ export class Ride {
   private readonly _duration: string;
   private readonly _driver: Driver;
   private readonly _value: number;
-  private readonly _date: Date;
+  private _date: Date;
 
   constructor({
-    id,
     customerId,
     origin,
     destination,
@@ -36,7 +35,6 @@ export class Ride {
     value,
     date,
   }: RideParams) {
-    this._id = id || Ride.generateId();
     this._customerId = customerId;
     this._origin = origin;
     this._destination = destination;
@@ -47,20 +45,20 @@ export class Ride {
     this._date = date;
   }
 
-  get id(): number {
-    return this._id;
-  }
-
-  get customerId(): string {
-    return this._customerId;
-  }
-
   get origin(): Location {
     return this._origin;
   }
 
   get destination(): Location {
     return this._destination;
+  }
+
+  get id(): number {
+    return this._id;
+  }
+
+  get customerId(): string {
+    return this._customerId;
   }
 
   get driver(): Driver {
@@ -77,6 +75,10 @@ export class Ride {
 
   get value(): number {
     return this._value;
+  }
+
+  set date(newDate) {
+    this._date = newDate;
   }
 
   get date(): Date {

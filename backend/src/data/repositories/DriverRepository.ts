@@ -17,16 +17,28 @@ export class DriverRepository implements IDriverRepository {
     return this.dataSource.getRepository(DriverORM);
   }
 
-  async findById(id: number): Promise<Driver | null> {
-    const driverOrm = await this.driverRepository.findOne({
-      where: { id: id },
-    });
+  async findById(driverId: number): Promise<Driver | null> {
+    try {
+      const driverOrm = await this.driverRepository.findOne({
+        where: { id: driverId },
+        relations: ['vehicle'],
+      });
 
-    if (!driverOrm) {
-      return null
+      if (!driverOrm) {
+        return null;
+      }
+
+      const DriverMapperReturn = DriverMapper.toDomain(driverOrm);
+
+      return DriverMapperReturn;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Erro ao buscar o driver pelo ID ${driverId}: ${error?.message}`,
+        );
+      }
+      throw error;
     }
-
-    return DriverMapper.toDomain(driverOrm);
   }
 
   async findEligibleDrivers(distance: number): Promise<Driver[]> {

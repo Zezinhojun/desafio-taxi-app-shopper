@@ -13,7 +13,7 @@ export class DriverSeedService {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) { }
+  ) {}
 
   async seedDrivers() {
     const driverRepository = this.dataSource.getRepository(DriverORM);
@@ -31,7 +31,7 @@ export class DriverSeedService {
         description:
           'Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).',
         vehicle: {
-          id: "1",
+          id: '1',
           model: 'Plymouth Valiant 1973 rosa e enferrujado',
           description: 'Carro antigo e peculiar de Homer',
         },
@@ -49,7 +49,7 @@ export class DriverSeedService {
         description:
           'Ei, aqui é o Dom. Pode entrar, vou te levar com segurança e rapidez ao seu destino. Só não mexa no rádio, a playlist é sagrada.',
         vehicle: {
-          id: "2",
+          id: '2',
           model: 'Dodge Charger R/T 1970 modificado',
           description: 'Carro potente e modificado para corridas.',
         },
@@ -67,7 +67,7 @@ export class DriverSeedService {
         description:
           'Boa noite, sou James Bond. À seu dispor para um passeio suave e discreto. Aperte o cinto e aproveite a viagem.',
         vehicle: {
-          id: "3",
+          id: '3',
           model: 'Aston Martin DB5 clássico',
           description: 'Carro clássico e elegante com recursos secretos.',
         },
@@ -86,10 +86,10 @@ export class DriverSeedService {
     await queryRunner.startTransaction();
 
     try {
-      const vehiclesData = driversData.map(driverData => ({
+      const vehiclesData = driversData.map((driverData) => ({
         id: driverData.vehicle.id,
         model: driverData.vehicle.model,
-        description: driverData.vehicle.description
+        description: driverData.vehicle.description,
       }));
 
       for (const vehicleData of vehiclesData) {
@@ -117,7 +117,7 @@ export class DriverSeedService {
           name: driverData.name,
           description: driverData.description,
           vehicle: vehicle,
-          review: review,
+          reviews: review,
           ratePerKm: driverData.ratePerKm,
           minimumDistance: driverData.minimumDistance,
         });
@@ -128,7 +128,6 @@ export class DriverSeedService {
       }
 
       await queryRunner.commitTransaction();
-      console.log('Drivers seed executado com sucesso!');
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error('Erro ao executar seed de drivers:', error);
