@@ -1,5 +1,5 @@
 export interface ReviewParams {
-  id: number;
+  id?: number;
   rating: number;
   comment: string;
 }
@@ -9,8 +9,7 @@ export class Review {
   private readonly _rating: number;
   private readonly _comment: string;
 
-  constructor({ id, rating, comment }: ReviewParams) {
-    this._id = id;
+  constructor({ rating, comment }: ReviewParams) {
     this._rating = rating;
     this._comment = comment;
   }

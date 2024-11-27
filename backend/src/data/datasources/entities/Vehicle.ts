@@ -7,7 +7,4 @@ export class VehicleORM {
 
   @Column({ type: 'varchar', length: 255 })
   model: string;
-
-  @Column({ type: 'text' })
-  description: string;
 }

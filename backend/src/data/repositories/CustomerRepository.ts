@@ -11,7 +11,7 @@ export class CustomerRepository implements ICustomerRepository {
   constructor(
     @inject(TYPES.DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   private get customerRepository(): Repository<CustomerORM> {
     return this.dataSource.getRepository(CustomerORM);

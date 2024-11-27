@@ -33,15 +33,16 @@ export class DriverSeedService {
         vehicle: {
           id: '1',
           model: 'Plymouth Valiant 1973 rosa e enferrujado',
-          description: 'Carro antigo e peculiar de Homer',
         },
-        review: {
-          rating: 2,
-          comment:
-            'Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.',
-        },
-        ratePerKm: 2.5,
+        review: [
+          {
+            rating: 2,
+            comment:
+              'Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.',
+          },
+        ],
         minimumDistance: 1,
+        ratePerKm: 2.5,
       },
       {
         id: 2,
@@ -51,13 +52,14 @@ export class DriverSeedService {
         vehicle: {
           id: '2',
           model: 'Dodge Charger R/T 1970 modificado',
-          description: 'Carro potente e modificado para corridas.',
         },
-        review: {
-          rating: 4,
-          comment:
-            'Que viagem incrível! O carro é um show à parte e o motorista, apesar de ter uma cara de poucos amigos, foi super gente boa. Recomendo!',
-        },
+        review: [
+          {
+            rating: 4,
+            comment:
+              'Que viagem incrível! O carro é um show à parte e o motorista, apesar de ter uma cara de poucos amigos, foi super gente boa. Recomendo!',
+          },
+        ],
         ratePerKm: 5.0,
         minimumDistance: 5,
       },
@@ -69,13 +71,14 @@ export class DriverSeedService {
         vehicle: {
           id: '3',
           model: 'Aston Martin DB5 clássico',
-          description: 'Carro clássico e elegante com recursos secretos.',
         },
-        review: {
-          rating: 5,
-          comment:
-            'Serviço impecável! O motorista é a própria definição de classe e o carro é simplesmente magnífico. Uma experiência digna de um agente secreto.',
-        },
+        review: [
+          {
+            rating: 5,
+            comment:
+              'Serviço impecável! O motorista é a própria definição de classe e o carro é simplesmente magnífico. Uma experiência digna de um agente secreto.',
+          },
+        ],
         ratePerKm: 10.0,
         minimumDistance: 10,
       },
@@ -89,14 +92,12 @@ export class DriverSeedService {
       const vehiclesData = driversData.map((driverData) => ({
         id: driverData.vehicle.id,
         model: driverData.vehicle.model,
-        description: driverData.vehicle.description,
       }));
 
       for (const vehicleData of vehiclesData) {
         const vehicleOrm = new VehicleORM();
         vehicleOrm.id = vehicleData.id;
         vehicleOrm.model = vehicleData.model;
-        vehicleOrm.description = vehicleData.description;
 
         await vehicleRepository.save(vehicleOrm);
       }
@@ -104,13 +105,15 @@ export class DriverSeedService {
         const vehicle = new Vehicle({
           id: driverData.vehicle.id,
           model: driverData.vehicle.model,
-          description: driverData.vehicle.description,
         });
 
-        const review = new Review({
-          rating: driverData.review.rating,
-          comment: driverData.review.comment,
-        });
+        const review = driverData.review.map(
+          (rev) =>
+            new Review({
+              rating: rev.rating,
+              comment: rev.comment,
+            }),
+        );
 
         const driverDomain = new Driver({
           id: driverData.id,

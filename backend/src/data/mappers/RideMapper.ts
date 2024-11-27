@@ -21,10 +21,8 @@ export class RideMapper {
 
   static toOrm(domainEntity: Ride): RideORM {
     const ormEntity = new RideORM();
-    ormEntity.id = domainEntity.id;
-
     const customerORM = new CustomerORM();
-    customerORM.id = domainEntity.customerId;
+    ormEntity.id = domainEntity.id;
     ormEntity.customer = customerORM;
     ormEntity.driver = DriverMapper.toOrm(domainEntity.driver);
     ormEntity.origin = LocationMapper.toOrm(domainEntity.origin);

@@ -25,6 +25,7 @@ export class Ride {
   private readonly _date: Date;
 
   constructor({
+    id,
     customerId,
     origin,
     destination,
@@ -34,6 +35,9 @@ export class Ride {
     value,
     date,
   }: RideParams) {
+    if (id) {
+      this._id = id;
+    }
     this._customerId = customerId;
     this._origin = origin;
     this._destination = destination;

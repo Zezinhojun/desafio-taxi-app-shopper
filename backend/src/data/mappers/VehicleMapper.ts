@@ -6,14 +6,12 @@ export class VehicleMapper {
     return new Vehicle({
       id: ormEntity.id,
       model: ormEntity.model,
-      description: ormEntity.description,
     });
   }
 
   static toOrm(domainEntity: Vehicle): VehicleORM {
     const ormEntity = new VehicleORM();
     ormEntity.model = domainEntity.model;
-    ormEntity.description = domainEntity.description;
     return ormEntity;
   }
 }

@@ -41,7 +41,6 @@ export class DriverMapper {
       const vehicle = new VehicleORM();
       vehicle.id = domainEntity.vehicle.id;
       vehicle.model = domainEntity.vehicle.model;
-      vehicle.description = domainEntity.vehicle.description;
       ormEntity.vehicle = vehicle;
     }
 

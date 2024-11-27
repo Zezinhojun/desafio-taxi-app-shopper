@@ -50,6 +50,7 @@ export class ConfirmRideUseCase {
     }
 
     const newRide: RideParams = {
+      id: rideDetails.id,
       customerId,
       origin: new Location({
         address: originLocation.address.trim(),
