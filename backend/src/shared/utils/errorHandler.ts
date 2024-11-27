@@ -26,7 +26,8 @@ class ErrorHandler {
       return;
     }
 
-    if (err.message === 'No rides found') {
+    if (err.message === 'No rides found' ||
+      err.message === "No rides found for this driver") {
       res.status(404).json({
         error_code: 'NO_RIDES_FOUND',
         error_description: 'No rides found for the specified customer.',

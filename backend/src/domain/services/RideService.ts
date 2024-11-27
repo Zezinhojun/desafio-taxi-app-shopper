@@ -27,7 +27,7 @@ export class RideService {
     private readonly estimateRideUseCase: EstimateRideUseCase,
     @inject(TYPES.GetRideHistoryUseCase)
     private readonly getRideHistoryUseCase: GetRideHistoryUseCase,
-  ) {}
+  ) { }
 
   private mapToRideEstimateDTO(estimate: RideEstimate): RideEstimateDTO {
     const availableDrivers = estimate.listAvailableDrivers();
@@ -49,8 +49,8 @@ export class RideService {
         description: driver.description,
         vehicle: driver.vehicle.model,
         review: {
-          rating: driver.review.rating,
-          comment: driver.review.comment,
+          rating: driver.review[0].rating,
+          comment: driver.review[0].comment,
         },
         value: driver.calculateRideValue(estimate.distance),
       })),
@@ -89,6 +89,7 @@ export class RideService {
     rideDetails,
   }: ConfirmRideParams): Promise<RideDTO> {
     const params = { customerId, rideDetails };
+
     const confirmedRide = await this.confirmRideUseCase.execute(params);
     return this.mapToRideDTO(confirmedRide);
   }

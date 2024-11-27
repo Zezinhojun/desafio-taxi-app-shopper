@@ -35,7 +35,9 @@ export class Ride {
     value,
     date,
   }: RideParams) {
-    this._id = id || Ride.generateId();
+    if (id) {
+      this._id = id;
+    }
     this._customerId = customerId;
     this._origin = origin;
     this._destination = destination;
@@ -46,20 +48,20 @@ export class Ride {
     this._date = date;
   }
 
-  get id(): number {
-    return this._id;
-  }
-
-  get customerId(): string {
-    return this._customerId;
-  }
-
   get origin(): Location {
     return this._origin;
   }
 
   get destination(): Location {
     return this._destination;
+  }
+
+  get id(): number {
+    return this._id;
+  }
+
+  get customerId(): string {
+    return this._customerId;
   }
 
   get driver(): Driver {
@@ -84,11 +86,5 @@ export class Ride {
 
   estimateRide(): number {
     return this._driver.calculateRideValue(this._distance);
-  }
-
-  private static generateId(): number {
-    const uuid = crypto.randomUUID();
-    const numericId = parseInt(uuid.replace(/\D/g, '').slice(0, 7), 10);
-    return numericId;
   }
 }

@@ -1,5 +1,5 @@
 import { Customer, CustomerParams } from '@domain/entities/Customer';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 import { mockRideFactory } from './Ride.spec';
 
 export const mockCustomerFactory = (

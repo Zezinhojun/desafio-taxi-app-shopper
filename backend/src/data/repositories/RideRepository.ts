@@ -1,97 +1,102 @@
-import { Driver } from '@domain/entities/Driver';
-import { Location } from '@domain/entities/Location';
-import { Review } from '@domain/entities/Review';
+import { LocationMapper } from './../mappers/LocationMapper';
+import { RideORM } from '@data/datasources/entities/Ride';
+import { RideMapper } from '@data/mappers/RideMapper';
 import { Ride } from '@domain/entities/Ride';
-import { Vehicle } from '@domain/entities/Vehicle';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
-import { injectable } from 'inversify';
+import { TYPES } from '@shared/di/Types';
+import { inject, injectable } from 'inversify';
+import { DataSource, Repository } from 'typeorm';
+import { LocationORM } from '@data/datasources/entities/Location';
+import { CustomerORM } from '@data/datasources/entities/Customer';
+import { DriverORM } from '@data/datasources/entities/Driver';
 
 @injectable()
 export class RideRepository implements IRideRepository {
-  private readonly rides: Ride[] = [
-    new Ride({
-      customerId: '12345',
-      origin: new Location({
-        address: 'Rua Reta',
-        latitude: 122,
-        longitude: 204,
-      }),
-      destination: new Location({
-        address: 'Rua Torta',
-        latitude: 123,
-        longitude: 205,
-      }),
-      distance: 10,
-      duration: '15 min',
-      driver: new Driver({
-        id: 2,
-        name: 'Dominic Toretto',
-        description:
-          'Ei, aqui é o Dom. Pode entrar, vou te levar com segurança e rapidez ao seu destino. Só não mexa no rádio, a playlist é sagrada.',
-        vehicle: new Vehicle({
-          model: 'Dodge Charger R/T 1970 modificado',
-          description: 'Veículo potente e modificado para corridas.',
-        }),
-        review: new Review({
-          rating: 4,
-          comment:
-            'Que viagem incrível! O carro é um show à parte e o motorista, apesar de ter uma cara de poucos amigos, foi super gente boa. Recomendo!',
-        }),
-        ratePerKm: 5.0,
-        minimumDistance: 5,
-      }),
-      value: 25.0,
-      date: new Date('2024-11-23T10:00:00'),
-    }),
-    new Ride({
-      customerId: '12345',
-      origin: new Location({
-        address: 'Rua direita',
-        latitude: 122,
-        longitude: 204,
-      }),
-      destination: new Location({
-        address: 'Rua esquerda',
-        latitude: 123,
-        longitude: 205,
-      }),
-      distance: 10,
-      duration: '15 min',
-      driver: new Driver({
-        id: 3,
-        name: 'James Bond',
-        description:
-          'Boa noite, sou James Bond. À seu dispor para um passeio suave e discreto. Aperte o cinto e aproveite a viagem.',
-        vehicle: new Vehicle({
-          model: 'Aston Martin DB5 clássico',
-          description: 'Carro clássico e elegante com recursos secretos.',
-        }),
-        review: new Review({
-          rating: 5,
-          comment:
-            'Serviço impecável! O motorista é a própria definição de classe e o carro é simplesmente magnífico. Uma experiência digna de um agente secreto.',
-        }),
-        ratePerKm: 10.0,
-        minimumDistance: 10,
-      }),
-      value: 25.0,
-      date: new Date('2022-11-23T10:00:00'),
-    }),
-  ];
+  constructor(
+    @inject(TYPES.DataSource)
+    private readonly dataSource: DataSource,
+  ) { }
 
-  async create(ride: Ride): Promise<Ride> {
-    this.rides.push(ride);
-    return ride;
+  private get rideRepository(): Repository<RideORM> {
+    return this.dataSource.getRepository(RideORM);
   }
-  async findByCustomerId(customerId: string): Promise<Ride[]> {
-    return this.rides.filter((ride) => ride.customerId === customerId);
+
+  private get locationRepository(): Repository<LocationORM> {
+    return this.dataSource.getRepository(LocationORM);
   }
+
+  private get customerRepository(): Repository<CustomerORM> {
+    return this.dataSource.getRepository(CustomerORM);
+  }
+
+  private get driverRepository(): Repository<DriverORM> {
+    return this.dataSource.getRepository(DriverORM);
+  }
+
   async findByDriverId(driverId: number): Promise<Ride[]> {
-    return this.rides.filter((r) => r.driver.id === driverId);
+    const ridesOrm = await this.rideRepository.find({
+      where: { driver: { id: driverId } },
+      relations: [
+        'customer',
+        'driver',
+        'driver.vehicle',
+        'driver.reviews',
+        'origin',
+        'destination',
+      ],
+    });
+    return ridesOrm.map(RideMapper.toDomain);
   }
-  async findByCustomerAndDriver(customerId: string, driverId: number) {
-    return this.rides.filter(
-      (ride) => ride.customerId === customerId && ride.driver.id === driverId,
+
+  async save(ride: Ride): Promise<Ride> {
+    const customer = await this.customerRepository.findOne({
+      where: { id: ride.customerId },
+    });
+
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const driver = await this.driverRepository.findOne({
+      where: { id: ride.driver.id },
+    });
+
+    if (!driver) {
+      throw new Error(`Driver not found`);
+    }
+
+    const origin = await this.locationRepository.save(
+      LocationMapper.toOrm(ride.origin),
     );
+
+    const destination = await this.locationRepository.save(
+      LocationMapper.toOrm(ride.destination),
+    );
+
+    const rideOrm = this.rideRepository.create({
+      id: ride.id,
+      customer,
+      driver,
+      origin,
+      destination,
+      distance: ride.distance,
+      createdAt: ride.date,
+      duration: ride.duration,
+      value: ride.value,
+    });
+
+    const savedRide = await this.rideRepository.save(rideOrm);
+
+    return new Ride({
+      id: savedRide.id,
+      customerId: savedRide.customer.id,
+      date: savedRide.createdAt,
+      origin: ride.origin,
+      destination: ride.destination,
+      duration: ride.duration,
+      value: ride.value,
+      driver: ride.driver,
+      distance: ride.distance,
+    });
   }
 }

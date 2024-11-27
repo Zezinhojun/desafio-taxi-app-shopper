@@ -1,7 +1,7 @@
 import { RideEstimate } from '@domain/entities/RideEstimate';
 import { mockLocationFactory } from './Location.spec';
 import { mockDriverFactory } from './Driver.spec';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 
 export const mockRideEstimateFactory = (): RideEstimate => {
   const mockOrigin = mockLocationFactory();

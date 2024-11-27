@@ -8,7 +8,7 @@ export interface DriverParams {
   vehicle: Vehicle;
   ratePerKm: number;
   minimumDistance: number;
-  review: Review;
+  reviews: Review[];
 }
 
 export class Driver {
@@ -18,7 +18,7 @@ export class Driver {
   private readonly _vehicle: Vehicle;
   private readonly _ratePerKm: number;
   private readonly _minimumDistance: number;
-  private readonly _review: Review;
+  private readonly _review: Review[];
 
   constructor({
     id,
@@ -27,7 +27,7 @@ export class Driver {
     vehicle,
     ratePerKm,
     minimumDistance,
-    review,
+    reviews: review,
   }: DriverParams) {
     this._id = id;
     this._name = name;

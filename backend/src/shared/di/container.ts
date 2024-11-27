@@ -4,8 +4,6 @@ import { TYPES } from './Types';
 import { RideRepository } from '@data/repositories/RideRepository';
 import { CustomerRepository } from '@data/repositories/CustomerRepository';
 import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
-import { DriverRepository } from '@data/repositories/DriverRepository';
-import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 import { GoogleMapsDataSource } from '@data/datasources/GoogleMapsDataSource';
 import { EstimateRideUseCase } from '@domain/usecase/EstimateRideUseCase';
 import { IRideController } from '@domain/interfaces/IRideController';
@@ -14,30 +12,94 @@ import { ConfirmRideUseCase } from '@domain/usecase/ConfirmRideUserCase';
 import { GetRideHistoryUseCase } from '@domain/usecase/GetRideHistoryUseCase';
 import { RideController } from '@presentation/controllers/RideController';
 import { RideRoutes } from '@presentation/routes/rideRoutes';
+import { AppDataSource } from '@data/datasources/DatabaseDataSource';
+import { DataSource } from 'typeorm';
+import { DriverRepository } from '@data/repositories/DriverRepository';
+import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
+import { DriverSeedService } from 'seeds/driver.seed';
+import mysql from 'mysql2/promise';
+import { CustomerSeedService } from 'seeds/customer.seed';
+import { RideSeedService } from 'seeds/ride.seed';
 
 const container = new Container();
 
-container.bind<IRideRepository>(TYPES.RideRepository).to(RideRepository);
-container
-  .bind<ICustomerRepository>(TYPES.CustomerRepository)
-  .to(CustomerRepository);
-container.bind<IDriverRepository>(TYPES.DriverRepository).to(DriverRepository);
-container
-  .bind<GoogleMapsDataSource>(TYPES.GoogleMapsDataSource)
-  .to(GoogleMapsDataSource);
+async function initializeDataSource() {
+  await createDatabaseIfNotExist();
+  try {
+    await AppDataSource.initialize();
+    console.log('Data Source has been initialized successfully!');
+  } catch (error) {
+    console.error('Error initializing Data Source:', error);
+    throw error;
+  }
+}
 
-container
-  .bind<EstimateRideUseCase>(TYPES.EstimateRideUseCase)
-  .to(EstimateRideUseCase);
-container
-  .bind<GetRideHistoryUseCase>(TYPES.GetRideHistoryUseCase)
-  .to(GetRideHistoryUseCase);
-container
-  .bind<ConfirmRideUseCase>(TYPES.ConfirmRideUseCase)
-  .to(ConfirmRideUseCase);
+async function createDatabaseIfNotExist() {
+  const databaseName = process.env.DB_NAME ?? 'taxi_app';
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST ?? 'localhost',
+    user: process.env.DB_USER ?? 'root',
+    password: process.env.DB_PASSWORD ?? '',
+  });
 
-container.bind<RideService>(TYPES.RideService).to(RideService);
-container.bind<IRideController>(TYPES.RideController).to(RideController);
+  try {
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${databaseName}\``);
+    console.log(`Database '${databaseName}' checked/created.`);
+  } catch (error) {
+    console.error('Error creating database:', error);
+    throw error;
+  } finally {
+    await connection.end();
+  }
+}
 
-container.bind<RideRoutes>(TYPES.RideRoutes).to(RideRoutes);
-export { container };
+async function initializeContainer() {
+  await initializeDataSource();
+  container.bind<DataSource>(TYPES.DataSource).toConstantValue(AppDataSource);
+  container
+    .bind<IDriverRepository>(TYPES.DriverRepository)
+    .to(DriverRepository);
+
+  container.bind<IRideRepository>(TYPES.RideRepository).to(RideRepository);
+  container
+    .bind<ICustomerRepository>(TYPES.CustomerRepository)
+    .to(CustomerRepository);
+  container
+    .bind<GoogleMapsDataSource>(TYPES.GoogleMapsDataSource)
+    .to(GoogleMapsDataSource);
+  container
+    .bind<EstimateRideUseCase>(TYPES.EstimateRideUseCase)
+    .to(EstimateRideUseCase);
+  container
+    .bind<GetRideHistoryUseCase>(TYPES.GetRideHistoryUseCase)
+    .to(GetRideHistoryUseCase);
+  container
+    .bind<ConfirmRideUseCase>(TYPES.ConfirmRideUseCase)
+    .to(ConfirmRideUseCase);
+  container.bind<RideService>(TYPES.RideService).to(RideService);
+  container.bind<IRideController>(TYPES.RideController).to(RideController);
+  container.bind<RideRoutes>(TYPES.RideRoutes).to(RideRoutes);
+
+  container
+    .bind<DriverSeedService>(TYPES.DriverSeedService)
+    .to(DriverSeedService);
+  const driverSeedService = container.get<DriverSeedService>(
+    TYPES.DriverSeedService,
+  );
+
+  container
+    .bind<CustomerSeedService>(TYPES.CustomerSeedService)
+    .to(CustomerSeedService);
+  const customerSeedService = container.get<CustomerSeedService>(
+    TYPES.CustomerSeedService,
+  );
+
+  container.bind<RideSeedService>(TYPES.RideSeedService).to(RideSeedService);
+  const rideSeedService = container.get<RideSeedService>(TYPES.RideSeedService);
+
+  await driverSeedService.seedDrivers();
+  await customerSeedService.seedCustomer();
+  await rideSeedService.seedRides();
+}
+
+export { container, initializeContainer };

@@ -2,33 +2,35 @@ import { Driver } from '@domain/entities/Driver';
 import { Ride } from '@domain/entities/Ride';
 import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
-import { IRideRepository } from '@domain/interfaces/IRideRepository';
 import { TYPES } from '@shared/di/Types';
 import { inject } from 'inversify';
 
 export class GetRideHistoryUseCase {
   constructor(
-    @inject(TYPES.RideRepository)
-    private readonly rideRepository: IRideRepository,
     @inject(TYPES.CustomerRepository)
     private readonly customerRepository: ICustomerRepository,
     @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
-  ) {}
+  ) { }
 
   async execute(customerId: string, driverId?: number): Promise<Ride[]> {
     const customer = await this.customerRepository.findById(customerId);
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
+
     let driver: Driver | null = null;
-    if (driverId) {
+
+    console.log(driverId)
+
+    if (driverId !== undefined) {
+
+      console.log(driverId)
       driver = await this.driverRepository.findById(driverId);
+      console.log(driver)
       if (!driver) {
         throw new Error('Driver not found');
       }
     }
-    const rides = await this.rideRepository.findByCustomerId(customerId);
+
+    const rides: Ride[] = customer?.rideHistory ?? [];
 
     if (rides.length === 0) {
       throw new Error('No rides found');
@@ -36,9 +38,11 @@ export class GetRideHistoryUseCase {
 
     if (driverId) {
       const filteredRides = rides.filter((ride) => ride.driver.id === driverId);
+
       if (filteredRides.length === 0) {
-        throw new Error('No rides found');
+        throw new Error('No rides found for this driver');
       }
+
       return filteredRides;
     }
 

@@ -2,12 +2,12 @@ import { Ride } from '@domain/entities/Ride';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
 
 export class InMemoryRideRepository implements IRideRepository {
-  private readonly rides: Ride[] = [];
-
-  async create(ride: Ride): Promise<Ride> {
+  async save(ride: Ride): Promise<Ride> {
     this.rides.push(ride);
     return ride;
   }
+  private readonly rides: Ride[] = [];
+
   async findByCustomerId(customerId: string): Promise<Ride[]> {
     return this.rides.filter((ride) => ride.customerId === customerId);
   }

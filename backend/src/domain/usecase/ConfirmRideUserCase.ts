@@ -1,5 +1,6 @@
+import { GoogleMapsDataSource } from '@data/datasources/GoogleMapsDataSource';
+import { Location } from '@domain/entities/Location';
 import { Ride, RideParams } from '@domain/entities/Ride';
-import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
 import { IDriverRepository } from '@domain/interfaces/IDriverRepository';
 import { IRideRepository } from '@domain/interfaces/IRideRepository';
 import { ConfirmRideParams } from '@domain/services/RideService';
@@ -11,18 +12,13 @@ export class ConfirmRideUseCase {
   constructor(
     @inject(TYPES.RideRepository)
     private readonly rideRepository: IRideRepository,
-    @inject(TYPES.CustomerRepository)
-    private readonly customerRepository: ICustomerRepository,
     @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
-  ) {}
+    @inject(TYPES.GoogleMapsDataSource)
+    private readonly googleMapsDataSource: GoogleMapsDataSource,
+  ) { }
 
   async execute({ customerId, rideDetails }: ConfirmRideParams): Promise<Ride> {
-    const customer = await this.customerRepository.findById(customerId);
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
-
     if (
       !rideDetails.origin ||
       !rideDetails.destination ||
@@ -31,31 +27,56 @@ export class ConfirmRideUseCase {
       throw new Error('Invalid origin or destination');
     }
 
+    const originAddress =
+      typeof rideDetails.origin === 'string'
+        ? rideDetails.origin
+        : rideDetails.origin.address;
+
+    const destinationAddress =
+      typeof rideDetails.destination === 'string'
+        ? rideDetails.destination
+        : rideDetails.destination.address;
+
+    const originLocation =
+      await this.googleMapsDataSource.geocodeAddress(originAddress);
+
+    const destinationLocation =
+      await this.googleMapsDataSource.geocodeAddress(destinationAddress);
+
+    const responseGoogle = await this.googleMapsDataSource.calculateRoute(originLocation, destinationLocation)
+
     const driver = await this.driverRepository.findById(rideDetails.driver.id);
+
     if (!driver) {
-      throw new Error('Driver not found');
+      throw new Error('Driver not found')
     }
 
-    if (!driver.isEligibleForDistance(rideDetails.distance)) {
+    if (!driver?.isEligibleForDistance(responseGoogle.distance)) {
       throw new Error('Invalid distance for this driver');
     }
 
     const newRide: RideParams = {
       id: rideDetails.id,
       customerId,
-      origin: rideDetails.origin,
-      destination: rideDetails.destination,
-      distance: rideDetails.distance,
-      duration: rideDetails.duration,
-      driver: driver,
+      origin: new Location({
+        address: originLocation.address.trim(),
+        latitude: originLocation.latitude,
+        longitude: originLocation.longitude,
+      }),
+      destination: new Location({
+        address: destinationLocation.address.trim(),
+        latitude: destinationLocation.latitude,
+        longitude: destinationLocation.longitude,
+      }),
+      distance: responseGoogle.distance,
+      duration: responseGoogle.duration,
+      driver: rideDetails.driver,
       value: rideDetails.value,
       date: rideDetails.date,
     };
 
     const ride = new Ride(newRide);
 
-    await this.rideRepository.create(ride);
-
-    return ride;
+    return await this.rideRepository.save(ride);
   }
 }

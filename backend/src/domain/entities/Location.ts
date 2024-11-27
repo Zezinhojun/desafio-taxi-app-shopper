@@ -5,6 +5,7 @@ export interface LocationParams {
 }
 
 export class Location {
+  private readonly _id?: number;
   private readonly _address: string;
   private readonly _latitude: number;
   private readonly _longitude: number;
@@ -13,6 +14,10 @@ export class Location {
     this._address = address;
     this._latitude = latitude;
     this._longitude = longitude;
+  }
+
+  get id() {
+    return this._id;
   }
 
   get address() {

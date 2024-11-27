@@ -1,21 +1,40 @@
+import { CustomerORM } from '@data/datasources/entities/Customer';
+import { CustomerMapper } from '@data/mappers/CustomerMapper';
 import { Customer } from '@domain/entities/Customer';
 import { ICustomerRepository } from '@domain/interfaces/ICustomerRepository';
-import { injectable } from 'inversify';
+import { TYPES } from '@shared/di/Types';
+import { inject, injectable } from 'inversify';
+import { DataSource, Repository } from 'typeorm';
 
 @injectable()
 export class CustomerRepository implements ICustomerRepository {
-  private readonly customers: Customer[] = [
-    new Customer({
-      id: '12345',
-      rideHistory: [],
-    }),
-    new Customer({
-      id: '67890',
-      rideHistory: [],
-    }),
-  ];
-  async findById(id: string): Promise<Customer | null> {
-    const customer = this.customers.find((c) => c.id === id);
-    return customer || null;
+  constructor(
+    @inject(TYPES.DataSource)
+    private readonly dataSource: DataSource,
+  ) { }
+
+  private get customerRepository(): Repository<CustomerORM> {
+    return this.dataSource.getRepository(CustomerORM);
+  }
+
+  async findById(customerId: string): Promise<Customer> {
+    const customerOrm = await this.customerRepository.findOne({
+      where: { id: customerId },
+      relations: [
+        'rides',
+        'rides.customer',
+        'rides.origin',
+        'rides.destination',
+        'rides.driver',
+        'rides.driver.vehicle',
+        'rides.driver.reviews',
+      ],
+    });
+
+    if (!customerOrm) {
+      throw new Error('Customer not found');
+    }
+
+    return CustomerMapper.toDomain(customerOrm);
   }
 }

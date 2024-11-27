@@ -9,4 +9,8 @@ export const TYPES = {
   EstimateRideUseCase: Symbol.for('EstimateRideUseCase'),
   GetRideHistoryUseCase: Symbol.for('GetRideHistoryUseCase'),
   ConfirmRideUseCase: Symbol.for('ConfirmRideUseCase'),
+  DataSource: Symbol('DataSource'),
+  DriverSeedService: Symbol.for('DriverSeedService'),
+  CustomerSeedService: Symbol.for('CustomerSeedService'),
+  RideSeedService: Symbol.for('RideSeedService'),
 };

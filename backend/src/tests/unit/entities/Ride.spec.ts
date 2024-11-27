@@ -1,5 +1,5 @@
 import { Ride, RideParams } from '@domain/entities/Ride';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 import { mockDriverFactory } from './Driver.spec';
 import { mockLocationFactory } from './Location.spec';
 
