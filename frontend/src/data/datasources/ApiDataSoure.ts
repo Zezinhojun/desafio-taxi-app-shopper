@@ -1,4 +1,5 @@
 import { Ride } from '@/domain/models/Ride';
+import { RideEstimate } from '@/domain/models/RideEstimate';
 import axios from 'axios'
 
 export class ApiDataSource {
@@ -15,7 +16,7 @@ export class ApiDataSource {
         return response.data;
     }
 
-    async confirmRide(customerId: string, rideDetails: any): Promise<Ride> {
+    async confirmRide(customerId: string, rideDetails: Ride): Promise<Ride> {
         const response = await axios.post("/api/confirm-ride", { customerId, rideDetails });
         return response.data;
     }
