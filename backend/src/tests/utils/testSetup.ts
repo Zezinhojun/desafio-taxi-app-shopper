@@ -150,7 +150,6 @@ export const mockConfirmRideUseCaseFactory = (): ConfirmRideUseCase => {
 
 export const mockGetRideHistoryUseCaseFactory = (): GetRideHistoryUseCase => {
   return new GetRideHistoryUseCase(
-
     new InMemoryCustomerRepository(),
     new InMemoryDriverRepository(),
   );

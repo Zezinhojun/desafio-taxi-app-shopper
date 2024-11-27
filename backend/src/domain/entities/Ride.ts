@@ -1,6 +1,5 @@
 import { Driver } from './Driver';
 import { Location } from './Location';
-import { randomUUID } from 'crypto';
 
 export interface RideParams {
   id?: number;
@@ -23,7 +22,7 @@ export class Ride {
   private readonly _duration: string;
   private readonly _driver: Driver;
   private readonly _value: number;
-  private _date: Date;
+  private readonly _date: Date;
 
   constructor({
     customerId,
@@ -77,21 +76,11 @@ export class Ride {
     return this._value;
   }
 
-  set date(newDate) {
-    this._date = newDate;
-  }
-
   get date(): Date {
     return this._date;
   }
 
   estimateRide(): number {
     return this._driver.calculateRideValue(this._distance);
-  }
-
-  private static generateId(): number {
-    const uuid = randomUUID();
-    const numericId = parseInt(uuid.replace(/\D/g, '').slice(0, 7), 10);
-    return numericId;
   }
 }

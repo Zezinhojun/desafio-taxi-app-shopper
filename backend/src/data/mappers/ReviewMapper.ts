@@ -4,6 +4,7 @@ import { Review } from '@domain/entities/Review';
 export class ReviewMapper {
   static toDomain(ormEntity: ReviewORM): Review {
     return new Review({
+      id: ormEntity.id,
       rating: ormEntity.rating,
       comment: ormEntity.comment,
     });

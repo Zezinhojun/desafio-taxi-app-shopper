@@ -11,7 +11,7 @@ export class GetRideHistoryUseCase {
     private readonly customerRepository: ICustomerRepository,
     @inject(TYPES.DriverRepository)
     private readonly driverRepository: IDriverRepository,
-  ) { }
+  ) {}
 
   async execute(customerId: string, driverId?: number): Promise<Ride[]> {
     const customer = await this.customerRepository.findById(customerId);

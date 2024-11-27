@@ -8,7 +8,7 @@ export class RideMapper {
   static toDomain(ormEntity: RideORM): Ride {
     return new Ride({
       id: ormEntity.id,
-      customerId: ormEntity.customer.id ?? '1',
+      customerId: ormEntity.customer.id,
       driver: DriverMapper.toDomain(ormEntity.driver),
       origin: LocationMapper.toDomain(ormEntity.origin),
       destination: LocationMapper.toDomain(ormEntity.destination),

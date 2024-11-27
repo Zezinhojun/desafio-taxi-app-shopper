@@ -1,5 +1,4 @@
 import { LocationMapper } from './../mappers/LocationMapper';
-import { DriverMapper } from '@data/mappers/DriverMapper';
 import { RideORM } from '@data/datasources/entities/Ride';
 import { RideMapper } from '@data/mappers/RideMapper';
 import { Ride } from '@domain/entities/Ride';
@@ -34,26 +33,6 @@ export class RideRepository implements IRideRepository {
     return this.dataSource.getRepository(DriverORM);
   }
 
-  async findByCustomerId(customerId: string): Promise<Ride[]> {
-    const rides = await this.rideRepository.find({
-      where: { customer: { id: customerId } },
-      relations: ['driver', 'origin', 'destination'],
-    });
-    return rides.map(
-      (rideORM) =>
-        new Ride({
-          id: rideORM.id,
-          customerId: rideORM.customer.id,
-          driver: DriverMapper.toDomain(rideORM.driver),
-          origin: LocationMapper.toDomain(rideORM.origin),
-          destination: LocationMapper.toDomain(rideORM.destination),
-          distance: rideORM.distance,
-          duration: rideORM.duration,
-          value: rideORM.value,
-          date: rideORM.createdAt,
-        }),
-    );
-  }
   async findByDriverId(driverId: number): Promise<Ride[]> {
     const ridesOrm = await this.rideRepository.find({
       where: { driver: { id: driverId } },
@@ -66,28 +45,7 @@ export class RideRepository implements IRideRepository {
         'destination',
       ],
     });
-    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : [];
-  }
-
-  async findByCustomerAndDriver(
-    customerId: string,
-    driverId: number,
-  ): Promise<Ride[]> {
-    const ridesOrm = await this.rideRepository.find({
-      where: {
-        customer: { id: customerId },
-        driver: { id: driverId },
-      },
-      relations: [
-        'customer',
-        'driver',
-        'driver.vehicle',
-        'driver.reviews',
-        'origin',
-        'destination',
-      ],
-    });
-    return ridesOrm ? ridesOrm.map(RideMapper.toDomain) : [];
+    return ridesOrm.map(RideMapper.toDomain);
   }
 
   async save(ride: Ride): Promise<Ride> {
@@ -107,19 +65,13 @@ export class RideRepository implements IRideRepository {
       throw new Error(`Driver not found`);
     }
 
-    const origin = await this.locationRepository.save({
-      id: ride.origin.id,
-      address: ride.origin.address,
-      latitude: ride.origin.latitude,
-      longitude: ride.origin.longitude,
-    });
+    const origin = await this.locationRepository.save(
+      LocationMapper.toOrm(ride.origin),
+    );
 
-    const destination = await this.locationRepository.save({
-      id: ride.destination.id,
-      address: ride.destination.address,
-      latitude: ride.destination.latitude,
-      longitude: ride.destination.longitude,
-    });
+    const destination = await this.locationRepository.save(
+      LocationMapper.toOrm(ride.destination),
+    );
 
     const rideOrm = this.rideRepository.create({
       id: ride.id,
