@@ -1,5 +1,4 @@
 import { ApiDataSource } from "@/data/datasources/ApiDataSoure";
-import { RideEstimate } from "@/domain/models/RideEstimate";
 import { EstimateRideUseCase } from "@/domain/usecases/EstimateRide";
 import { useState } from "react";
 
@@ -9,7 +8,8 @@ const estimateRideUseCase = new EstimateRideUseCase(rideDataSource);
 export function useEstimateRide() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [rideEstimate, setRideEstimate] = useState<RideEstimate | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [rideEstimate, setRideEstimate] = useState<any | null>(null);
 
     const validateInputs = (customerId: string, origin: string, destination: string) => {
         if (!customerId || !origin || !destination) {

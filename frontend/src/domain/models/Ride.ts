@@ -84,8 +84,4 @@ export class Ride {
         return this._date;
     }
 
-    estimateRide(): number {
-        return this._driver.calculateRideValue(this._distance);
-    }
-
 }

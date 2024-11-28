@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useEstimateRide } from "../hooks/useRideEstimate";
-import { Driver } from "@/domain/models/Driver";
+import { Driver} from "@/domain/models/Driver";
 import { useGenerateMapUrl } from "../hooks/useGenerateMapUrl";
 import { useConfirmRide } from "../hooks/useConfirmRide";
 
@@ -16,7 +16,7 @@ export default function EstimateRideForm() {
     const [originCoords, setOriginCoords] = useState<Coords>(null);
     const [destinationCoords, setDestinationCoords] = useState<Coords>(null);
     const mapUrl = useGenerateMapUrl(process.env.NEXT_PUBLIC_GOOGLE_API_KEY, originCoords, destinationCoords);
-    const { confirmRide, error: confirmError, isLoading: confirmLoading } = useConfirmRide();
+    const { confirmRide} = useConfirmRide();
 
     const handleEstimate = async () => {
         if (customerId && origin && destination) {
@@ -27,7 +27,7 @@ export default function EstimateRideForm() {
     };
 
     const handleSelectDriver = async (driverId: number) => {
-        const selectedDriver = rideEstimate.options.find((driver: Driver) => driver.id === driverId);
+        const selectedDriver = rideEstimate?.options.find((driver: any) => driver.id === driverId);
 
         if (selectedDriver) {
             const rideDetails = {
@@ -42,7 +42,7 @@ export default function EstimateRideForm() {
             };
     
             try {
-                await confirmRide(customerId, rideDetails);
+                await confirmRide(customerId, rideDetails as any);
             } catch (error) {
                 console.error("Error confirming ride:", error);
             }
@@ -117,18 +117,17 @@ export default function EstimateRideForm() {
             )}
 
 
-            {/* Lista de cards de motoristas */}
+     
             {rideEstimate && rideEstimate.options && rideEstimate.options.length > 0 && (
     <div className="driver-cards-container">
-        {rideEstimate.options.map((driverData : Driver) => {
-            // Certifique-se de criar uma instância de Driver
+        {rideEstimate.options.map((driverData: any) => {
             const driver = new Driver(driverData);
             return (
                 <div key={driver.id} className="driver-card">
                     <h3>{driver.name}</h3>
                     <p>{driver.description}</p>
-                    <p><strong>Vehicle:</strong> {driver.vehicle}</p>
-                    <p><strong>Review:</strong> {driverData.review ? `Rating: ${driverData.review.rating}, Comment: ${driverData.review.comment}` : "No reviews available"}</p>
+                    <p><strong>Vehicle:</strong> {driver.vehicle.toString()}</p>
+                    <p><strong>Review:</strong> {driverData.reviews ? `Rating: ${driverData.reviews.rating}, Comment: ${driverData.reviews.comment}` : "No reviews available"}</p>
                     <p><strong>Value:</strong> R$ {driverData.value?.toFixed(2)}</p>
                     <button onClick={() => handleSelectDriver(driver.id)}>Choose</button>
                 </div>

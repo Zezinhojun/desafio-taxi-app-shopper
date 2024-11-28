@@ -65,7 +65,7 @@ export function RideHistoryPage() {
                 <div>
                   <p><strong>Date:</strong> {new Date(ride.date).toLocaleString()}</p>
                   <p><strong>Driver:</strong> {ride.driver.name}</p>
-                  <p><strong>Route:</strong> {ride.origin} → {ride.destination}</p>
+                  <p><strong>Route:</strong> {ride.origin.toString()} → {ride.destination.toString()}</p>
                 </div>
                 <div className="text-right">
                   <p><strong>Distance:</strong> {ride.distance} m</p>
