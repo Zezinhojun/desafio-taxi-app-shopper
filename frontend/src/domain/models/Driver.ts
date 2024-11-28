@@ -9,6 +9,7 @@ export interface DriverParams {
     ratePerKm: number;
     minimumDistance: number;
     reviews: Review[];
+    value?: number;
 }
 
 export class Driver {
@@ -19,6 +20,7 @@ export class Driver {
     private readonly _ratePerKm: number;
     private readonly _minimumDistance: number;
     private readonly _reviews: Review[];
+    private readonly _value?: number;
 
     constructor({
         id,
@@ -28,6 +30,8 @@ export class Driver {
         ratePerKm,
         minimumDistance,
         reviews,
+        value,
+
     }: DriverParams) {
         this._id = id;
         this._name = name;
@@ -36,6 +40,7 @@ export class Driver {
         this._ratePerKm = ratePerKm;
         this._minimumDistance = minimumDistance;
         this._reviews = reviews
+        this._value = value;
     }
 
     get id(): number {
@@ -66,8 +71,7 @@ export class Driver {
         return this._reviews;
     }
 
-    calculateRideValue(distance: number): number {
-        return distance * this._ratePerKm;
+    get value() {
+        return this._value
     }
-
 }

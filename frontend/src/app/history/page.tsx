@@ -1,5 +1,5 @@
-import RideHistoryPage from '@/presentation/pages/RideHistoryPage'
+import EstimateRideForm from '@/presentation/pages/EstimatePage'
 
 export default function Page() {
-  return <RideHistoryPage />
+  return <EstimateRideForm />
 }

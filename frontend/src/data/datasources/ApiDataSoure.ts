@@ -18,8 +18,20 @@ export class ApiDataSource {
     }
 
     async estimateRide(customerId: string, origin: string, destination: string): Promise<RideEstimate> {
-        const response = await axios.post("/api/estimate-ride", { customerId, origin, destination });
-        return response.data;
+        try {
+            const response = await axios.post("http://localhost:8080/rides/estimate", {
+                customer_id: customerId,
+                origin,
+                destination,
+            });
+
+            console.log(response.data)
+
+            return response.data;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            throw new Error("Failed to estimate the ride. Please try again.");
+        }
     }
 
     async confirmRide(customerId: string, rideDetails: Ride): Promise<Ride> {
