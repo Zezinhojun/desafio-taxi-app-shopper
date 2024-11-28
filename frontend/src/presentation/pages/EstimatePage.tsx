@@ -5,13 +5,15 @@ import { useEstimateRide } from "../hooks/useRideEstimate";
 import { Driver } from "@/domain/models/Driver";
 import { useGenerateMapUrl } from "../hooks/useGenerateMapUrl";
 
+type Coords = { latitude: number; longitude: number } | null;
+
 export default function EstimateRideForm() {
     const [customerId, setCustomerId] = useState("");
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
-    const { estimateRide, isLoading, rideEstimate } = useEstimateRide();
-    const [originCoords, setOriginCoords] = useState<{ latitude: number, longitude: number } | null>(null);
-    const [destinationCoords, setDestinationCoords] = useState<{ latitude: number, longitude: number } | null>(null);
+    const {estimateRide, isLoading, rideEstimate } = useEstimateRide();
+    const [originCoords, setOriginCoords] = useState<Coords>(null);
+    const [destinationCoords, setDestinationCoords] = useState<Coords>(null);
     const mapUrl = useGenerateMapUrl(process.env.NEXT_PUBLIC_GOOGLE_API_KEY, originCoords, destinationCoords);
 
     const handleEstimate = async () => {
@@ -25,7 +27,6 @@ export default function EstimateRideForm() {
     useEffect(() => {
         if (rideEstimate && rideEstimate.options) {
             console.log(rideEstimate)
-            // Atualiza as coordenadas de origem e destino com base no retorno da estimativa
             setOriginCoords({
                 latitude: rideEstimate.origin.latitude,
                 longitude: rideEstimate.origin.longitude,
@@ -36,6 +37,7 @@ export default function EstimateRideForm() {
             });
         }
     }, [rideEstimate]);
+
     return (
         <div>
             <h1>Estimate Your Ride</h1>

@@ -9,10 +9,6 @@ export function RideHistoryPage() {
   const [selectedDriverId, setSelectedDriverId] = useState<number | undefined>(undefined);
   const { rides, error, isLoading } = useGetRideHistory(customerId, selectedDriverId);
 
-  const handleFilter = () => {
-    // The hook will automatically fetch rides when customerId changes
-  };
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Ride History</h1>
@@ -41,7 +37,7 @@ export function RideHistoryPage() {
         </select>
         
         <button 
-          onClick={handleFilter}
+          onClick={() => {}}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Apply Filter
@@ -69,10 +65,10 @@ export function RideHistoryPage() {
                 <div>
                   <p><strong>Date:</strong> {new Date(ride.date).toLocaleString()}</p>
                   <p><strong>Driver:</strong> {ride.driver.name}</p>
-                  <p><strong>Route:</strong> {ride.origin.address} → {ride.destination.address}</p>
+                  <p><strong>Route:</strong> {ride.origin} → {ride.destination}</p>
                 </div>
                 <div className="text-right">
-                  <p><strong>Distance:</strong> {ride.distance} km</p>
+                  <p><strong>Distance:</strong> {ride.distance} m</p>
                   <p><strong>Duration:</strong> {ride.duration}</p>
                   <p><strong>Value:</strong> R$ {ride.value.toFixed(2)}</p>
                 </div>
