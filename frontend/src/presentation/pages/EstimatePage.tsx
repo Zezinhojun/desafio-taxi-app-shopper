@@ -3,12 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { useEstimateRide } from "../hooks/useRideEstimate";
 import { Driver } from "@/domain/models/Driver";
+import { useGenerateMapUrl } from "../hooks/useGenerateMapUrl";
 
 export default function EstimateRideForm() {
     const [customerId, setCustomerId] = useState("");
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
     const { estimateRide, isLoading, rideEstimate } = useEstimateRide();
+    const [originCoords, setOriginCoords] = useState<{ latitude: number, longitude: number } | null>(null);
+    const [destinationCoords, setDestinationCoords] = useState<{ latitude: number, longitude: number } | null>(null);
+    const mapUrl = useGenerateMapUrl(process.env.NEXT_PUBLIC_GOOGLE_API_KEY, originCoords, destinationCoords);
 
     const handleEstimate = async () => {
         if (customerId && origin && destination) {
@@ -17,9 +21,6 @@ export default function EstimateRideForm() {
             alert("Please fill in all fields.");
         }
     };
-
-    const [originCoords, setOriginCoords] = useState<{ latitude: number, longitude: number } | null>(null);
-    const [destinationCoords, setDestinationCoords] = useState<{ latitude: number, longitude: number } | null>(null);
 
     useEffect(() => {
         if (rideEstimate && rideEstimate.options) {
@@ -35,13 +36,6 @@ export default function EstimateRideForm() {
             });
         }
     }, [rideEstimate]);
-
-    // URL do Google Maps com marcadores para origem e destino
-    const mapUrl = originCoords && destinationCoords 
-    ? `https://www.google.com/maps/embed/v1/directions?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&origin=${originCoords.latitude},${originCoords.longitude}&destination=${destinationCoords.latitude},${destinationCoords.longitude}&mode=driving`
-    : "";
-
-
     return (
         <div>
             <h1>Estimate Your Ride</h1>
@@ -79,9 +73,10 @@ export default function EstimateRideForm() {
                 {isLoading ? "Estimating..." : "Estimate Ride"}
             </button>
 
-            {originCoords && destinationCoords && (
+            {originCoords && destinationCoords && mapUrl && (
                 <div className="map-container">
                     <iframe
+                        title="Google Maps Directions"
                         width="600"
                         height="400"
                         src={mapUrl}
@@ -91,6 +86,7 @@ export default function EstimateRideForm() {
                     ></iframe>
                 </div>
             )}
+
 
             {/* Lista de cards de motoristas */}
             {rideEstimate && rideEstimate.options && rideEstimate.options.length > 0 && (
