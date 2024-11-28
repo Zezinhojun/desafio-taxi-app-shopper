@@ -45,11 +45,11 @@ export class RideController implements IRideController {
       value,
       date: new Date(),
     };
-
     try {
       await this.rideService.confirmRide({
         customerId: customer_id,
         rideDetails: ride as Ride,
+
       });
 
       res.status(200).json({ success: true });

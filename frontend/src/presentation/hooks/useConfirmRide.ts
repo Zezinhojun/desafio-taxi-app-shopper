@@ -18,7 +18,6 @@ export function useConfirmRide(): UseConfirmRideResult {
         try {
             const apiDataSource = new ApiDataSource();
             const useCase = new ConfirmRideUseCase(apiDataSource);
-
             await useCase.execute({ customerId, rideDetails });
             setIsLoading(false);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars

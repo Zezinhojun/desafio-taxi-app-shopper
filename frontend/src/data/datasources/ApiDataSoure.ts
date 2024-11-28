@@ -25,8 +25,6 @@ export class ApiDataSource {
                 destination,
             });
 
-            console.log(response.data)
-
             return response.data;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
@@ -35,7 +33,7 @@ export class ApiDataSource {
     }
 
     async confirmRide(customerId: string, rideDetails: Ride): Promise<Ride> {
-        const response = await axios.post("/api/confirm-ride", { customerId, rideDetails });
+        const response = await axios.post("http://localhost:8080/rides/confirm", { customerId, rideDetails });
         return response.data;
     }
 }

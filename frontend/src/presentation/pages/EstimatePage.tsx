@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useEstimateRide } from "../hooks/useRideEstimate";
 import { Driver } from "@/domain/models/Driver";
 import { useGenerateMapUrl } from "../hooks/useGenerateMapUrl";
+import { useConfirmRide } from "../hooks/useConfirmRide";
 
 type Coords = { latitude: number; longitude: number } | null;
 
@@ -15,6 +16,7 @@ export default function EstimateRideForm() {
     const [originCoords, setOriginCoords] = useState<Coords>(null);
     const [destinationCoords, setDestinationCoords] = useState<Coords>(null);
     const mapUrl = useGenerateMapUrl(process.env.NEXT_PUBLIC_GOOGLE_API_KEY, originCoords, destinationCoords);
+    const { confirmRide, error: confirmError, isLoading: confirmLoading } = useConfirmRide();
 
     const handleEstimate = async () => {
         if (customerId && origin && destination) {
@@ -24,9 +26,34 @@ export default function EstimateRideForm() {
         }
     };
 
+    const handleSelectDriver = async (driverId: number) => {
+        const selectedDriver = rideEstimate.options.find((driver: Driver) => driver.id === driverId);
+
+        if (selectedDriver) {
+            const rideDetails = {
+                customer_id: customerId,
+                origin: origin, 
+                destination: destination, 
+                driver: {
+                    id: selectedDriver.id,
+                    name: selectedDriver.name,
+                },
+                value: selectedDriver.value, 
+            };
+    
+            try {
+                await confirmRide(customerId, rideDetails);
+            } catch (error) {
+                console.error("Error confirming ride:", error);
+            }
+        } else {
+            console.error("Driver not found");
+        }
+    };
+
+    
     useEffect(() => {
         if (rideEstimate && rideEstimate.options) {
-            console.log(rideEstimate)
             setOriginCoords({
                 latitude: rideEstimate.origin.latitude,
                 longitude: rideEstimate.origin.longitude,
@@ -114,7 +141,3 @@ export default function EstimateRideForm() {
 }
 
 // Função para lidar com a escolha do motorista
-const handleSelectDriver = (driverId: number) => {
-    console.log("Driver chosen:", driverId);
-    // Adicione a lógica para confirmar a viagem e redirecionar, se necessário
-};
